@@ -35,14 +35,20 @@
     yazi
   ];
 
-  # 开发相关服务
+  # 启用系统级别docker（推荐）
   virtualisation.docker = {
     enable = true;
-    rootless = {
-      enable = true;
-      setSocketVariable = true;
-    };
   };
+
+  # 自动将用户添加到 docker 组
+  users.users.arcane.extraGroups = [ "docker" ];
+
+  #设置docker网络代理
+  systemd.services.docker.serviceConfig.Environment = [
+  "HTTP_PROXY=http://127.0.0.1:7897"
+  "HTTPS_PROXY=http://127.0.0.1:7897"
+  "NO_PROXY=localhost,127.0.0.1,.local,/var/run/docker.sock"
+];
 
   # 开发环境变量
   environment.variables = {

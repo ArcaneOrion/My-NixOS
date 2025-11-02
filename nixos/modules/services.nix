@@ -11,5 +11,5 @@
   
   # 电源配置服务
   services.power-profiles-daemon.enable = true;
-  
+ 
 }

@@ -21,12 +21,14 @@
     #spotify
     
     # 办公
+    onlyoffice-desktopeditors 
     #libreoffice
     obsidian
  
     # 图形工具
     
     # 系统工具
+    appimage-run
     
   ];
 
@@ -49,7 +51,7 @@
 
   # 环境变量（Wayland 必需）
   environment.sessionVariables = {
-    XDG_CURRENT_DESKTOP = "Hyprland";
+    XDG_CURRENT_DESKTOP = "Niri";
     XDG_SESSION_TYPE = "wayland";
     GDK_BACKEND = "wayland";
     QT_QPA_PLATFORM = "wayland";
