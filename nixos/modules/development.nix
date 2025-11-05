@@ -12,19 +12,23 @@
     neovim
     vim
     
-    # 编程语言
+    # 编程语言 
+    ghc 
+    ghcid 
+
     python3
-    #rust
-    #gcc
-    #gnumake
-    #cmake
+
+    #rustc
+    #rustup
     
     # 开发工具
     docker
     docker-compose
     #postman
-    #insomnia
-    
+   
+    #容器支持
+    distrobox #arch ubuntu (不影响nixos系统环境）   
+ 
     # 数据库
     #sqlite
     #postgresql

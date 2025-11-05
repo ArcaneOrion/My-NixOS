@@ -35,9 +35,8 @@
   # 字体
   fonts.packages = with pkgs; [
     noto-fonts
-    sarasa-gothic
-   # noto-fonts-cjk
-    #noto-fonts-emoji
+    noto-fonts-color-emoji
+    sarasa-gothic  # 更现代的中文字体（可选）
   ];
 
   # 输入法配置（新写法）

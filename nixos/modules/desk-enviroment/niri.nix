@@ -4,7 +4,7 @@
   environment.systemPackages = [
       pkgs.niri
       pkgs.fuzzel
-      pkgs.xwayland-satellite
+      pkgs.xwayland-satellite #启用xwayland
     ];
-  
+
 }
