@@ -1,0 +1,18 @@
+[terminal.shell]
+program = "/run/current-system/sw/bin/zsh"
+# args = ["--login"]  # 如果需要
+
+[window]
+# 可选值: "full", "none", "transparent", "buttonless"
+decorations = "none"  # 完全去掉边框和标题栏（需 WM 支持）
+
+opacity = 0.85  # 透明度：1.0 = 完全不透明，0.0 = 完全透明
+
+[window.padding]
+# 上下左右统一设置（单位：像素）
+# padding = 20
+
+# 或分别设置上下、左右
+x = 15   # 左右间距（水平）
+y = 20   # 上下间距（垂直）
+
