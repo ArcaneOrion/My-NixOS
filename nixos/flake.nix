@@ -20,12 +20,7 @@
       inputs.quickshell.follows = "quickshell"; 
     };
     
-    # DankMaterialShell(niri)
-    /*niri = {
-      url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    }; */
-    
+    # DankMaterialShell(niri) 
     dgop = {
       url = "github:AvengeMedia/dgop";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -57,7 +52,7 @@
               useUserPackages = true;
               extraSpecialArgs = { inherit inputs; };
               
-              # Arcane 主用户（AI agent） —— 擅长AI智能体和工具的开发使用(coding)，成为AI超级个体
+              # Arcane 主用户 —— AI使用和研究，成为AI超级个体
               users.arcane = {
                 home.username = "arcane";
                 home.homeDirectory = "/home/arcane";
@@ -67,26 +62,12 @@
                 imports = [
                   ./users/arcane/arcane-base.nix
                   ./users/arcane/development.nix
-                  #./share/noctalia.nix
-                  ./share/DankMaterialShell.nix
+                  #./users/arcane/noctalia.nix
+                  ./users/arcane/DankMaterialShell.nix
                   ];
                 };
               
-              # Arcanexis 用户 —— AI研究员（算法和工程学习）
-              users.arcanexis = {
-                home.username = "arcanexis";
-                home.homeDirectory = "/home/arcanexis";
-                home.stateVersion = "25.05";
-                programs.home-manager.enable = true;
-
-                imports = [
-                  ./users/arcanexis/arcanexis-base.nix
-                  ./share/noctalia.nix 
-                  ];
-                };
-
-
-              # Jerry  —— 量化金融与商业分析
+              # Jerry  —— 极简学习环境
               users.jerry = {
                 home.username = "jerry";
                 home.homeDirectory = "/home/jerry";
@@ -95,20 +76,19 @@
 
                 imports = [
                   ./users/jerry/jerry-base.nix
-                  ./share/noctalia.nix
                  ];
                };
 
-              # learner 用户 —— 日常学习娱乐
-              users.learner = {
-                home.username = "learner";
-                home.homeDirectory = "/home/learner";
+              # Sandbox ——测试沙盒环境
+              users.sandbox = {
+                home.username = "sandbox";
+                home.homeDirectory = "/home/sandbox";
                 home.stateVersion = "25.05";
                 programs.home-manager.enable = true;
 
                 imports = [
-                   ./users/learner/learner-base.nix
-                   ./share/DankMaterialShell.nix
+                   #./users/sandbox/sandbox-base.nix
+                   #./share/DankMaterialShell.nix
                   ];
                 };
 

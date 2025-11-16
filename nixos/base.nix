@@ -132,23 +132,17 @@
     extraGroups = [ "networkmanager" "wheel" "docker"];
   };
 
-  users.users.arcanexis = {
-    isNormalUser = true;
-    description = "Arcanexis";
-    extraGroups = [ "networkmanager" "wheel" "docker"];
-  };
-
   users.users.jerry = {
     isNormalUser = true;
     description = "Jerry";
-    extraGroups = [ "networkmanager" "wheel" "docker"];
+    extraGroups = [ "networkmanager"];
     #shell = pkgs.zsh;
   };
 
-  users.users.learner = {
+  users.users.sandbox = {
     isNormalUser = true;
-    description = "Learner";
-    extraGroups = [ "networkmanager" "wheel" "docker"];
+    description = "Sandbox";
+    extraGroups = [ "networkmanager"];
     #shell = pkgs.zsh;
   };
 
@@ -170,8 +164,6 @@
   mesa-demos
   docker
   docker-compose
-  git
-  helix 
   ];
 
  # 电源管理服务
@@ -195,5 +187,12 @@
   "HTTPS_PROXY=http://127.0.0.1:7897"
   "NO_PROXY=localhost,127.0.0.1,.local,/var/run/docker.sock"
 ];
+
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true; #启用32位驱动支持
+  };
+
+  services.xserver.videoDrivers = ["amdgpu"];
 
 }

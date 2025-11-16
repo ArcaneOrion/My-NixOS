@@ -2,9 +2,9 @@
 
 {
   environment.systemPackages = with pkgs; [
+  helix
   vim 
   neovim
-  clash-verge-rev
   appimage-run
   niri
   ];
@@ -65,6 +65,6 @@
     QT_IM_MODULE = "fcitx";
     XMODIFIERS = "@im=fcitx";
     SDL_IM_MODULE = "fcitx";
-  };
+  }; 
 
 }

@@ -3,6 +3,8 @@
 
 {
   home.packages = with pkgs; [
+    # 版本控制
+    git
     
     # 编辑器 & IDE
     zed-editor #rust写的下一代代码编辑器

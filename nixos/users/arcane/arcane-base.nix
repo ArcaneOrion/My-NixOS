@@ -7,9 +7,17 @@
     # 浏览器
     chromium
     google-chrome
+
+    # 网络
+    clash-verge-rev
     
     # 通讯
      wechat
+     qq
+
+     # 娱乐
+     bilibili
+     steam
     
     # 办公
     onlyoffice-desktopeditors 
