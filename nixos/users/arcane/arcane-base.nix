@@ -14,7 +14,6 @@
     # 通讯信息
      wechat
      qq
-     folo
 
      # 娱乐
      bilibili

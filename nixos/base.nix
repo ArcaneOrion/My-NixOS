@@ -167,8 +167,6 @@
   inxi        # 系统信息工具
   mesa-demos  # glxinfo
   iproute2
-  docker
-  docker-compose
   ];
 
  # 电源管理服务
