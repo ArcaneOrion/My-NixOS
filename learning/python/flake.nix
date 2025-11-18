@@ -8,10 +8,11 @@
     let 
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
       pythonEnv = pkgs.python313.withPackages (ps: with ps; [
-        # 核心科学计算
-        numpy scipy pandas matplotlib
+        numpy
+        scipy 
+        pandas 
+        matplotlib
         
-        # 学习工具
         jupyterlab
       ]);
     in {
