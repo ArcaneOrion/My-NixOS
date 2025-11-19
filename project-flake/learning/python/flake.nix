@@ -18,6 +18,11 @@
     in {
       devShell.x86_64-linux = pkgs.mkShell {
         packages = [ pythonEnv ];
+     
+     shellHook = ''
+          echo "环境就绪"
+          exit  #退出bash
+        '';
       };
     };
 }
