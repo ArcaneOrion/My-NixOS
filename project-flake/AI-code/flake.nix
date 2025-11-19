@@ -19,12 +19,14 @@
           ];
 
           shellHook = ''
-            if [ ! -d "node_modules" ] && [ -f "package.json" ]; then
-             cd npm-pakages && npm install
+            if [ ! -d "npm-pakages/node_modules" ] && [ -f "npm-pakages/package.json" ]; then
+             echo "正在下载npm包"
+             (cd npm-pakages && npm install)
             fi
 
-            if [ -d "node_modules" ] && [ -f "package.json" ]; then
-             cd npm-pakages && npm updata
+            if [ -d "npm-pakages/node_modules" ] && [ -f "npm-pakages/package.json" ]; then
+             echo "正在更新npm包"
+             (cd npm-pakages && npm update)
             fi
 
             echo "环境就绪"
