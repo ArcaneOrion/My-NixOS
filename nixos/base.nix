@@ -185,8 +185,11 @@
 
   # 启用系统级别docker（推荐）
   virtualisation.docker = {
-    enable = false;   #禁止自启动，手动先启动clash
+    enable = true;
   };
+
+  # 禁止 docker 开机自启 先启动clash
+  systemd.services.docker.wantedBy = [];
 
   #设置docker网络代理
   systemd.services.docker.serviceConfig.Environment = [
