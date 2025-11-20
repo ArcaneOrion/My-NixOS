@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs,lib, ... }:
 
 {
   #启动flake等'实验性'功能
@@ -189,7 +189,8 @@
   };
 
   # 禁止 docker 开机自启 先启动clash
-  systemd.services.docker.wantedBy = [];
+  systemd.services.docker.wantedBy = lib.mkForce [];
+  systemd.sockets.docker.wantedBy = lib.mkForce [];
 
   #设置docker网络代理
   systemd.services.docker.serviceConfig.Environment = [
