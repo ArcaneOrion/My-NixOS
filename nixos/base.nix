@@ -192,9 +192,4 @@
   "NO_PROXY=localhost,127.0.0.1,.local,/var/run/docker.sock"
 ];
 
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true; #启用32位驱动支持
-  };
-
 }

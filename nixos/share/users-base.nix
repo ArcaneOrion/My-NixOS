@@ -51,6 +51,22 @@
   # 重新设置主题  p10k configure
   programs.zsh.enable = true;
 
+  # 启用 Steam
+
+  # steam需要系统级别配置
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = false;
+    dedicatedServer.openFirewall = false;
+  };
+  # 32 位图形支持
+  hardware.graphics = {
+    enable = true;        
+    enable32Bit = true; 
+  };
+  # 可选：性能优化
+  programs.gamemode.enable = true;
+
    # 环境变量（Wayland 必需）
   environment.sessionVariables = {
     XDG_CURRENT_DESKTOP = "Niri";

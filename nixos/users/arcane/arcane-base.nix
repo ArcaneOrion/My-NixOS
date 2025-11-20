@@ -17,7 +17,6 @@
 
      # 娱乐
      bilibili
-     steam
     
     # 办公
     onlyoffice-desktopeditors 
