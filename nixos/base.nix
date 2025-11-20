@@ -188,7 +188,7 @@
     enable = true;
   };
 
-  # 禁止 docker 开机自启 先启动clash
+  # 禁止 docker 开机自启 先手动启动clash
   systemd.services.docker.wantedBy = lib.mkForce [];
   systemd.sockets.docker.wantedBy = lib.mkForce [];
 
