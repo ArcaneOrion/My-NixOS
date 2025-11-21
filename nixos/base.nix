@@ -26,24 +26,6 @@
       
       # 手动添加 Arch Linux 引导条目
       extraEntries = ''
-        menuentry "Arch Linux" {
-          insmod part_gpt
-          insmod ext2
-          insmod fat
-          search --no-floppy --fs-uuid --set=root 729C-E7C6
-          linux /vmlinuz-linux root=UUID=169acbe0-8049-4c17-9ca1-87f62fdb2b69 rw quiet
-          initrd /initramfs-linux.img
-        }
-        
-        menuentry "Arch Linux (Fallback)" {
-          insmod part_gpt
-          insmod ext2
-          insmod fat
-          search --no-floppy --fs-uuid --set=root 729C-E7C6
-          linux /vmlinuz-linux root=UUID=169acbe0-8049-4c17-9ca1-87f62fdb2b69 rw quiet
-          initrd /initramfs-linux-fallback.img
-        }
-        
         menuentry "Windows" {
           insmod part_gpt
           insmod fat
