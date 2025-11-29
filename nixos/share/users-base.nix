@@ -9,6 +9,11 @@
   appimage-run
   niri
   clash-verge-rev
+
+  xdg-utils                    # 提供 xdg-open 等命令
+  xdg-desktop-portal           # 核心门户服务
+  xdg-desktop-portal-gnome     # niri 依赖 GNOME portal 实现屏幕捕获
+  xdg-desktop-portal-gtk       # 文件选择器等基础功能
   ];
 
    # 完整的字体配置
