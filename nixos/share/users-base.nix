@@ -74,6 +74,44 @@
   # 可选：性能优化
   programs.gamemode.enable = true;
 
+  #  启用 Firejail  沙盒环境使用tor
+  programs.firejail = {
+    enable = true;
+
+    # 包装 Tor Browser
+    wrappedBinaries = {
+      tor-browser = {
+        executable = "${pkgs.lib.getBin pkgs.tor-browser}/bin/tor-browser";
+        
+        # 使用 Firejail 自带的 profile
+        profile = "${pkgs.firejail}/etc/firejail/tor-browser.profile";
+        
+        extraArgs = [
+          # --- 安全增强 ---
+          "--private-tmp"
+          "--dns=127.0.0.1"
+          
+          # --- Wayland / Niri 兼容性关键设置 ---
+          # 注意：Niri 在某些情况下可能会使用 wayland-1。
+          # 如果启动失败，请在终端运行 `echo $WAYLAND_DISPLAY` 查看，
+          # 并将下方的 wayland-0 改为对应的名字。
+          "--whitelist=\${RUNUSER}/wayland-0"
+          "--whitelist=\${RUNUSER}/wayland-1" #以此类推，多写一行作为备用通常无害
+          
+          # 强制使用原生 Wayland (重要)
+          "--env=MOZ_ENABLE_WAYLAND=1"
+          
+          # 修复 GTK/Wayland 下的一些沙盒报错
+          "--ignore=private-dev"
+          
+          # 如果遇到 DBus 报错，可能需要取消注释下面这行：
+          # "--ignore=nodbus" 
+        ];
+      };
+    };
+  };
+
+
    # 环境变量（Wayland 必需）
   environment.sessionVariables = {
     XDG_CURRENT_DESKTOP = "Niri";
