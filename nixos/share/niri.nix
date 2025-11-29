@@ -17,6 +17,14 @@
     "image/webp" = "imv.desktop";
   };
 
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true; # 对 wlroots 合成器的支持
+    # Niri 推荐使用 gtk portal 来处理文件选择和打开链接
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    config.common.default = "*";
+  };
+
   # 系统级图形配置 - 必须添加！
   hardware.graphics = {
     enable = true;
