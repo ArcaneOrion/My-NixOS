@@ -4,18 +4,21 @@
   environment.systemPackages = [
       pkgs.fuzzel
       pkgs.xwayland-satellite #启用xwayland
-      pkgs.nautilus #文件管理器
+      pkgs.xfce.thunar #文件管理器
       pkgs.imv   # 图片查看器
       pkgs.mpv  #视频
     ];
 
 
   xdg.mime.defaultApplications = {
-    "inode/directory" = "org.gnome.Nautilus.desktop";
+    "inode/directory" = "thunar.desktop";
+    "application/x-directory" = "thunar.desktop";
     "image/jpeg" = "imv.desktop";
     "image/png" = "imv.desktop";
     "image/webp" = "imv.desktop";
   };
+
+  services.gvfs.enable = true;
 
   xdg.portal = {
     enable = true;

@@ -17,7 +17,8 @@
      bilibili
     
     # 办公
-    onlyoffice-desktopeditors 
+    onlyoffice-desktopeditors
+    wpsoffice-cn 
     feishu 
     obsidian
  
