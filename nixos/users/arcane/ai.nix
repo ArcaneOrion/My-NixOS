@@ -2,10 +2,12 @@
 
 {  
 
-  home.packages = [
-    pkgs.opencode
-    pkgs.cherry-studio
-    pkgs.lmstudio
+  home.packages = with pkgs; [
+    opencode
+    cherry-studio
+    lmstudio
+    ollama
+    onnxruntime
   ];
 
 }
