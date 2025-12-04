@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "@anthropic-ai/claude-code": "^2.0.42",
-    "@iflow-ai/iflow-cli": "^0.3.21",
-    "@musistudio/claude-code-router": "^1.0.64",
-    "to": "^0.2.9",
-    "update": "^0.7.4"
-  }
-}

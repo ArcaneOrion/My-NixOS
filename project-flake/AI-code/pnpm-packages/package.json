@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@anthropic-ai/claude-code": "^2.0.56",
+    "@iflow-ai/iflow-cli": "^0.4.1",
+    "@playwright/test": "^1.56.1",
+    "@qoder-ai/qodercli": "^0.1.14"
+  }
+}
