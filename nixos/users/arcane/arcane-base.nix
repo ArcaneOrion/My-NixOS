@@ -24,6 +24,9 @@
  
     # 下载器
     motrix
+
+    # 电子书
+    calibre
   ];
 
 }
