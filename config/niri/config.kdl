@@ -274,7 +274,8 @@ spawn-at-startup "dms" "run"
 spawn-at-startup "wl-paste" "--watch" "cliphist" "store"
 
 spawn-at-startup "clash-verge"
-spawn-at-startup "google-chrome-stable"
+//spawn-at-startup "google-chrome-stable"
+spawn-sh-at-startup "setsid google-chrome-stable" //消息管理
 spawn-at-startup "cherry-studio"
 spawn-at-startup "obsidian"
 spawn-at-startup "discord"
