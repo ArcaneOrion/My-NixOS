@@ -75,7 +75,7 @@
         [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
         # LM Studio
-        export PATH="$PATH:/home/arcane/.lmstudio/bin"
+        export PATH="$PATH:$HOME/.lmstudio/bin"
 
         # --- 自定义补全函数 ---
         
