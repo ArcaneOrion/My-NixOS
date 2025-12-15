@@ -20,6 +20,8 @@
 
   services.gvfs.enable = true;
 
+  services.gnome.gnome-keyring.enable = true; #密钥管理，zed需要
+
   xdg.portal = {
     enable = true;
     wlr.enable = true; # 对 wlroots 合成器的支持
