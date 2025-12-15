@@ -4,7 +4,7 @@
   environment.systemPackages = [
       pkgs.fuzzel
       pkgs.xwayland-satellite #启用xwayland
-      pkgs.xfce.thunar #文件管理器
+      pkgs.nautilus #文件管理器
       pkgs.imv   # 图片查看器
       pkgs.mpv  #视频
     ];
