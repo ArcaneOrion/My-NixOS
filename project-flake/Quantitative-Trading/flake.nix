@@ -13,18 +13,17 @@
       in {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
-            python311
-            uv
+            uv #管理python解释器及python包
             ghc
             cabal-install
             nodejs_22
+            # 添加 pkg-config 有助于某些 python 包编译找到库
+            pkg-config
           ];
 
           env = {
-            UV_PYTHON = "${pkgs.python311}/bin/python";
-            
             # nix-ld 读取这个
-            NIX_LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
+          NIX_LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
               pkgs.stdenv.cc.cc.lib  # libstdc++.so.6
               pkgs.zlib              # libz.so
               pkgs.libxml2           # lxml

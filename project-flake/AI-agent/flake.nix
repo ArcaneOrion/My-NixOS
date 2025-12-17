@@ -22,14 +22,12 @@
       in {
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
-            python311
-            uv
+            uv #使用uv管理python解释器版本及python包
             jupyter
             nodejs_22
           ];
 
           env = {
-            UV_PYTHON = "${pkgs.python311}/bin/python";
             NIX_LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath libs;
           };
 

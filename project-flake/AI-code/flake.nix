@@ -13,18 +13,14 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         packages = with pkgs; [
-          uv
+          uv #管理python解释器及python包
           pnpm_9
           nodejs_22
-          python313
           pkg-config
           gcc
         ];
 
         env = {
-          UV_PYTHON_DOWNLOADS = "never";
-          UV_PYTHON = "${pkgs.python313}/bin/python";
-          
           # nix-ld 会读取这个（用于非 Nix 二进制）
           NIX_LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath [
             pkgs.stdenv.cc.cc.lib

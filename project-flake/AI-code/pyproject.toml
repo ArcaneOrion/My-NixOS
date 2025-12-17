@@ -1,0 +1,21 @@
+[project]
+name = "ai-code"
+version = "0.1.0"
+description = "AI code 总依赖"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "deepagents-cli>=0.0.10",
+    "graph-cli>=0.1.19",
+    "jupyter>=1.1.1",
+    "markdown>=3.10",
+    "matplotlib>=3.10.7",
+    "numpy>=2.3.5",
+    "openai>=2.8.1",
+    "pandoc>=2.4",
+    "pip>=25.3",
+    "python-dotenv>=1.2.1",
+    "requests>=2.32.5",
+    "scipy>=1.16.3",
+]
+
