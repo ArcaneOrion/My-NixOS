@@ -1,4 +1,4 @@
-#  Arcane 开发环境配置
+#  Arcaneorion 开发环境配置
 { config, pkgs, lib, ... }:
 
 {
@@ -83,7 +83,7 @@
         [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
         # LM Studio
-        export PATH="$PATH:/home/arcane/.lmstudio/bin"
+        export PATH="$PATH:/home/arcaneorion/.lmstudio/bin"
 
         # --- 自定义补全函数 ---
         

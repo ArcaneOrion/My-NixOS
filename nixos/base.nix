@@ -97,18 +97,11 @@
 
 
   # 多用户配置
-  users.users.arcane = {
+  users.users.arcaneorion = {
     isNormalUser = true;
-    description = "Arcane";
+    description = "ArcaneOrion";
     extraGroups = [ "networkmanager" "wheel" "docker"];
     shell = pkgs.zsh;
-  };
-
-  users.users.jerry = {
-    isNormalUser = true;
-    description = "Jerry";
-    extraGroups = [ "networkmanager"];
-    #shell = pkgs.zsh;
   };
 
   users.users.sandbox = {
@@ -139,6 +132,9 @@
   inxi        # 系统信息工具
   mesa-demos  # glxinfo
   iproute2
+  brightnessctl #亮度控制
+  libnotify #桌面通知库
+  # mako #通知守护进程
 
   docker
   docker-compose

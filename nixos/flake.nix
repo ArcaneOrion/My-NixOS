@@ -48,34 +48,21 @@
               extraSpecialArgs = { inherit inputs; };
               backupFileExtension = "backup";
               
-              # Arcane 主用户 —— AI使用和研究，成为AI超级个体
-              users.arcane = {
-                home.username = "arcane";
-                home.homeDirectory = "/home/arcane";
+              # ArcaneOrion 主用户 —— AI使用和研究，成为AI超级个体
+              users.arcaneorion = {
+                home.username = "arcaneorion";
+                home.homeDirectory = "/home/arcaneorion";
                 home.stateVersion = "26.05";
                 programs.home-manager.enable = true;
 
                 imports = [
-                  ./users/arcane/arcane-base.nix
-                  ./users/arcane/development.nix
-                  ./users/arcane/ai.nix
-                  #./users/arcane/noctalia.nix
-                  ./users/arcane/DankMaterialShell.nix
+                  ./users/arcaneorion/arcaneorion-base.nix
+                  ./users/arcaneorion/development.nix
+                  ./users/arcaneorion/ai.nix
+                  #./users/arcaneorion/noctalia.nix
+                  ./users/arcaneorion/DankMaterialShell.nix
                   ];
                 };
-              
-              # Jerry  —— 极简学习环境
-              users.jerry = {
-                home.username = "jerry";
-                home.homeDirectory = "/home/jerry";
-                home.stateVersion = "26.05"; 
-                programs.home-manager.enable = true;
-
-                imports = [
-                  ./users/jerry/jerry-base.nix
-                  ./users/arcane/DankMaterialShell.nix
-                 ];
-               };
 
               # Sandbox ——测试沙盒环境
               users.sandbox = {
