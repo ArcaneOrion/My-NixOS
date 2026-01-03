@@ -148,7 +148,13 @@
   services.blueman.enable = true;
 
   # 电源配置服务
-  services.power-profiles-daemon.enable = true;
+  services.tlp = {
+    enable = true;
+    settings = {
+      START_CHARGE_THRESH_BAT0 = 96;
+      STOP_CHARGE_THRESH_BAT0 = 100;
+     };
+  };
 
 
 # 以下为系统级开发环境
