@@ -18,7 +18,15 @@
   ];
 
   # 启用 nix-ld（让下载的二进制文件能运行）
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc.lib # libstdc++, libgcc_s
+      zlib             # 压缩库需要
+      openssl          # SSL/TLS(网络程序需要)
+    ];
+  };
+  
   
   boot.kernel.sysctl."net.ipv4.ip_forward" = 1; #允许 Linux 内核“转发网络包”,TUN模式
 
