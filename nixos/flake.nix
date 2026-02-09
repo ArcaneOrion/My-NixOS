@@ -31,9 +31,15 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./hardware-configuration.nix
-          ./base.nix
-          ./share/users-base.nix
-          ./share/niri.nix
+          ./system/base.nix
+          ./system/users-base.nix
+          ./system/fonts.nix
+          ./system/networking.nix
+          ./system/gaming.nix
+          ./system/desktop/niri.nix
+          ./system/service/sing-box.nix
+          ./system/service/docker.nix
+          ./system/service/postgresql.nix
           home-manager.nixosModules.home-manager
           {
             home-manager = {
@@ -50,11 +56,11 @@
                 programs.home-manager.enable = true;
 
                 imports = [
-                  ./users/arcaneorion/arcaneorion-base.nix
-                  ./users/arcaneorion/development.nix
-                  ./users/arcaneorion/ai.nix
-                  ./users/arcaneorion/noctalia.nix
-                  #./users/arcaneorion/DankMaterialShell.nix
+                  ./home/arcaneorion/app.nix
+                  ./home/arcaneorion/development.nix
+                  ./home/arcaneorion/ai.nix
+                  ./home/arcaneorion/noctalia.nix
+                  #./home/arcaneorion/dank-material-shell.nix
                   ];
                 };
 
@@ -66,7 +72,7 @@
                 programs.home-manager.enable = true;
 
                 imports = [
-                   ./users/sandbox/sandbox-base.nix
+                   ./home/sandbox/base.nix
                   ];
                 };
 

@@ -115,27 +115,24 @@
 
   # 系统基础包
   environment.systemPackages = with pkgs; [
-  blueman
-  tlp
-  kitty
-  alacritty
-  tree
-  btop
-  yazi
-  killall
-  lsof
-  pciutils    # lspci
-  usbutils    # lsusb
-  lshw        # 硬件信息
-  inxi        # 系统信息工具
-  mesa-demos  # glxinfo
-  iproute2
-  brightnessctl #亮度控制
-  libnotify #桌面通知库
-  # mako #通知守护进程
-
-  docker
-  docker-compose
+    blueman
+    tlp
+    kitty
+    alacritty
+    tree
+    btop
+    yazi
+    killall
+    lsof
+    pciutils    # lspci
+    usbutils    # lsusb
+    lshw        # 硬件信息
+    inxi        # 系统信息工具
+    mesa-demos  # glxinfo
+    iproute2
+    brightnessctl # 亮度控制
+    libnotify # 桌面通知库
+    # mako # 通知守护进程
   ];
 
  # 电源管理服务
@@ -153,23 +150,5 @@
     #  STOP_CHARGE_THRESH_BAT0 = 80;
     # };
   #};
-
-
-# 以下为系统级开发环境
-  # 启用系统级别docker（推荐）
-  virtualisation.docker = {
-    enable = true;
-  };
-  
-  # 启动数据库
-  services.postgresql = {
-    enable = true;
-    package = pkgs.postgresql_16;
-    ensureDatabases = [ "arcanedatabase" ];
-    authentication = pkgs.lib.mkOverride 10 ''
-      # 类型 数据库 用户 认证方式
-      local all      all     trust
-    '';
-  };
 
 }
