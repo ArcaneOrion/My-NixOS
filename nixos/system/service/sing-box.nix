@@ -18,7 +18,7 @@ in
     serviceConfig = {
       Type = "simple";
       WorkingDirectory = singBoxDir;
-      ExecStartPre = "${updateScript} --config ${sourceConfig} --output ${runtimeConfig} --domain lmnode-ixd3fh2v5uqlv3z-lmus.lma1b2.com";
+      ExecStartPre = "${updateScript} --config ${sourceConfig} --output ${runtimeConfig}";
       ExecStart = "${singBoxBin} run -c ${runtimeConfig}";
       Restart = "on-failure";
       RestartSec = 3;

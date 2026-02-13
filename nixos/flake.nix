@@ -60,7 +60,7 @@
                   ./home/arcaneorion/development.nix
                   ./home/arcaneorion/ai.nix
                   ./home/arcaneorion/noctalia.nix
-                  #./home/arcaneorion/dank-material-shell.nix
+                  ./home/arcaneorion/dank-material-shell.nix
                   ];
                 };
 

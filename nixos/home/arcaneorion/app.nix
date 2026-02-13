@@ -17,7 +17,7 @@
      # 数学软件
      geogebra
      wxmaxima
-     octave
+     octaveFull
 
      # 娱乐
      bilibili
@@ -28,6 +28,8 @@
     libreoffice
     feishu 
     obsidian
+
+    figma-linux
 
     #音乐
     spotify  

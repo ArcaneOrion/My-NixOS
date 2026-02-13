@@ -133,6 +133,7 @@
     brightnessctl # 亮度控制
     libnotify # 桌面通知库
     # mako # 通知守护进程
+    grim #截图工具
   ];
 
  # 电源管理服务
