@@ -19,6 +19,13 @@
      wxmaxima
      octaveFull
 
+     # 网络安全
+     wireshark #抓包分析
+     burpsuite #web渗透测试
+     ghidra-bin #逆向工程
+     netcat #网络瑞士军刀
+     nmap #网络扫描器 
+
      # 娱乐
      bilibili
     
