@@ -12,6 +12,7 @@
     # 通讯信息
      wechat
      qq
+     telegram-desktop
      discord
 
      # 数学软件
