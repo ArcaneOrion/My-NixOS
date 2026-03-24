@@ -5,6 +5,7 @@
   home.packages = with pkgs; [
     # 版本控制
     git
+    gh
     
     # 编辑器 & IDE
     helix
@@ -39,6 +40,9 @@
       init.defaultBranch = "main";
       core.editor = "hx";
       pull.rebase = false;
+    };
+    pushes = {
+      autoSetupRemote = true;
     };
   };
 
