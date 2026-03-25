@@ -21,7 +21,10 @@
 
     #安卓工具
     android-tools
-    scrcpy 
+    scrcpy
+
+    #pdf工具
+    poppler-utils
   ];
 
   # 开发环境变量
