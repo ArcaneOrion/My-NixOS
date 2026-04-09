@@ -29,6 +29,8 @@
 
      # 娱乐
      bilibili
+     prismlauncher
+     hmcl
     
     # 办公
     onlyoffice-desktopeditors
