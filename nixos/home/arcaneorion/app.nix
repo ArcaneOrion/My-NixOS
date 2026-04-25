@@ -39,7 +39,7 @@
     feishu 
     obsidian
 
-    figma-linux
+    #figma-linux
 
     #音乐
     spotify  
