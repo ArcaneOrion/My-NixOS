@@ -273,16 +273,19 @@ layout {
 spawn-sh-at-startup "dbus-update-activation-environment --systemd WAYLAND_DISPLAY DISPLAY XDG_CURRENT_DESKTOP"
 
 spawn-at-startup "fcitx5"
-//spawn-at-startup "noctalia-shell"
-spawn-at-startup "dms" "run"
-spawn-at-startup "wl-paste" "--watch" "cliphist" "store"
 
-spawn-at-startup "clash-verge"
+spawn-at-startup "noctalia-shell"
+
+//DankMaterialShell
+//spawn-at-startup "dms" "run"
+//spawn-at-startup "wl-paste" "--watch" "cliphist" "store"
+
 spawn-at-startup "obsidian"
-spawn-sh-at-startup "cd AI/AI-code/ && code && zeditor" //获取环境变量再启动
+//spawn-sh-at-startup "cd AI/AI-code/ && code && zeditor" //获取环境变量再启动
 spawn-at-startup "cherry-studio"
-spawn-at-startup "steam"
-spawn-at-startup "discord"
+spawn-at-startup "geogebra"
+spawn-at-startup "wxmaxima"
+//spawn-sh-at-startup "code"
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
 
@@ -337,6 +340,8 @@ window-rule {
     match app-id="firefox$"
     match app-id="google-chrome$"
     match app-id="cherry-studio$"
+    match app-id="antigravity"
+    match app-id="spotify"
     match app-id="discord"
     match app-id="zed"
     match app-id="zeditor"
@@ -671,3 +676,4 @@ binds {
     // moving the mouse or pressing any other key.
     Mod+Shift+P { power-off-monitors; }
 }
+include "./noctalia.kdl"

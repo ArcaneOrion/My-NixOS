@@ -32,6 +32,7 @@
     EDITOR = "hx";
     VISUAL = "hx";
     NODE_ENV = "development";
+    _JAVA_AWT_WM_NONREPARENTING = "1";   # 修复geogebra白屏问题
   };
 
   # Git 配置
