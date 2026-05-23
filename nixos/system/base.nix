@@ -153,4 +153,27 @@
     # };
   #};
 
+  # 内存压缩交换 — 防止内存爆满时系统假死
+  zramSwap = {
+    enable = true;
+    memoryPercent = 50;  # 7G zram, 实际能存 ~18G 数据(lz4 压缩)
+    priority = 100;       # 优先用 zram, 不行再落 NVMe swap
+  };
+
+  # 关掉默认的 systemd-oomd(基于 PSI, 桌面场景反应慢)
+  systemd.oomd.enable = false;
+
+  # earlyoom: 简单阈值触发, 交互式桌面更适用
+  services.earlyoom = {
+    enable = true;
+    freeMemThreshold = 5;    # 内存剩 5% 时开始杀
+    freeSwapThreshold = 10;  # swap 剩 10% 时开始杀
+  };
+
+  # 内核内存管理调优 — 降低磁盘 swap 倾向,保留文件缓存
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 30;          # 适度提前换出冷页，降低顶满内存的概率
+    "vm.vfs_cache_pressure" = 50;  # 默认100 → 50: 多留文件缓存,Chrome/IDE受益
+  };
+
 }

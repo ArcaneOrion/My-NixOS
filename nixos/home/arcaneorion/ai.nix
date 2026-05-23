@@ -9,6 +9,7 @@
     lmstudio
     ollama
     onnxruntime
+    windsurf
   ];
 
 }
