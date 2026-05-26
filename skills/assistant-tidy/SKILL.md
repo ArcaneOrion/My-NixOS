@@ -1,86 +1,123 @@
 ---
 name: assistant-tidy
-description: 全量读取用户记忆文件，清理重复、过时和混乱内容，整合后重写
+description: 静态审计用户记忆系统，检查 signals/portrait/working/learning 等文件是否符合结构、证据链和写入边界；只做最小修正。
 ---
 
-# 记忆整理
+# 记忆系统静态审计
 
-全量读取 `~/.claude/user-memory/` 下所有记忆文件，审查并整理后重写。
+## 定位
 
-## 步骤
+审计已落盘的记忆文件是否符合新系统边界。执行格式修正、重复提示、证据链检查和疑问标记；不要生成画像，不要替代 `assistant-portrait`。
 
-### 1. 全量读取
+## 读取范围
 
-读取以下所有文件：
+读取：
 
-- `~/.claude/user-memory/self.md`
-- `~/.claude/user-memory/profile.md`
+- `~/.claude/user-memory/signals/schema.md`
+- `~/.claude/user-memory/signals/quality-criteria.md`
+- `~/.claude/user-memory/journal/schema.md`
+- `~/.claude/user-memory/archive/schema.md`
+- `~/.claude/user-memory/signals/` 文件列表与相关文件
+- `~/.claude/user-memory/portrait/` 全部文件
 - `~/.claude/user-memory/working.md`
-- `~/.claude/user-memory/journal/` 目录下所有 `YYYY-MM.md` 文件
-- `~/.claude/user-memory/learning/` 目录下所有 `.md` 文件（如存在）
-- `~/.claude/user-memory/raw/` 目录下所有 `.md` 文件（文件列表即可，内容按需读取）
+- `~/.claude/user-memory/learning/overview.md`
+- `~/.claude/user-memory/journal/` 文件列表
+- `~/.claude/user-memory/archive/` 文件列表
 
-### 2. 逐文件审查整理
+根目录旧画像 `profile*.md` / `self.md` 若仍存在，只标记为迁移残留；fallback 应优先读取 archive 最新 `portrait_snapshot`，`archive/v1/` 只作为低权重 `legacy_prior`。
 
-**self.md：**
-- 检查行为原则是否与用户最新偏好一致（对照 profile.md 的偏好段）
-- 删除冗余或矛盾的原则条目
-- 确保段落结构完整（我是什么/关系/行为原则）
+## 允许操作
 
-**profile.md：**
-- 合并重复条目（同一信息出现在多个段落）
-- 删除矛盾信息，以最新为准
-- 检查段落结构是否完整（身份/经历/技术栈/偏好/人际/关注领域）
-- 精简冗余表述
+可以：
 
-**working.md：**
-- "最近完成"中超过 7 天的条目 → 归档到当月 journal
-- "进行中"中明显已过时的条目 → 询问用户确认后移除或归档
-- "等待/阻塞"中长期未动的条目 → 标注提醒
-- 确保三个分区（进行中 / 最近完成 / 等待/阻塞）都存在且格式正确
+- 修正明显格式错误。
+- 标记 schema 缺失项。
+- 标记 portrait 条目缺少 evidence。
+- 标记 AI 推断疑似写成用户立场。
+- 标记 declarations 中缺少用户原话、来源、状态、置信度或主体性边界的条目。
+- 标记重复或冲突条目。
+- 提出合并/删除建议。
+- 修复文件标题、日期格式、frontmatter 小错误。
 
-**journal/YYYY-MM.md：**
-- 同一天的重复条目去重
-- 确保日期格式一致（`## MM-DD`）
-- 检查是否有孤立内容（不在任何日期标题下），归入最近的日期或创建合适的日期标题
+## 禁止操作
 
-**learning/ 目录（如存在）：**
-- overview 状态表与各学科文件的实际状态是否一致（等级、当前阶段、最近活动日期）
-- 薄弱点清理：已在后续测评/练习中克服的薄弱点标注为已克服或移除
-- 超过 3 个月未活动的学科 → 在 overview 状态栏标注"⏸️ 长期未活动"提醒
-- 学科文件格式是否完整（状态/路线图/测评记录/练习记录/薄弱点/笔记）
+不要默认：
 
-**raw/ 目录：**
-- 检查文件命名格式是否一致（`YYYY-MM-DD-主题.md`）
-- 超过 3 个月的 raw 文件 → 列出并询问用户是否归档/压缩/保留
-- 检查是否有内容与 profile.md 或 journal 重复度过高的文件（提示用户，不自行删除）
+- 删除实质内容。
+- 重写画像判断。
+- 合并有语义差异的条目。
+- 把 AI 推断改写成用户立场。
+- 从 signals 生成 portrait。
+- 静默改写 declarations 的声明内容。
 
-### 3. 写入修改后的文件
+不确定时，添加疑问标记或询问用户。
 
-对需要修改的文件执行写入。无需修改的文件不要重写。
+## 审计流程
 
-### 4. Git 提交
+### 1. 结构检查
 
-在 `~/.claude/user-memory/` 目录执行：
-1. `git add` 所有变更的记忆文件
-2. `git commit -m "描述"`，commit message 用中文概括本次整理内容
+检查目录是否存在：
 
-### 5. 汇报结果
+- `signals/`
+- `portrait/`
+- `archive/`
+- `journal/`
+- `learning/`
+- `raw/`
 
-用简洁的列表告知用户每个文件做了什么整理。格式示例：
+检查关键文件是否存在：
 
-```
-记忆整理完成：
-- profile.md：合并了技术栈中的重复条目
-- working.md：归档 3 条已完成事项到 journal/2026-03.md
-- journal/2026-02.md：无需调整
-- journal/2026-03.md：去重 1 条 03-10 的重复记录
-```
+- `signals/schema.md`
+- `signals/quality-criteria.md`
+- `portrait/self.md`
+- `portrait/profile-core.md`
+- `portrait/profile-patterns.md`
+- `portrait/profile-history.md`
+- `portrait/declarations.md`
+- `portrait/evidence-index.md`
+- `portrait/synthesis-log.md`
 
-如果所有文件都整洁，回复：记忆状态良好，无需整理。
+### 2. signals 审计
 
-## 注意事项
+检查每个 signal：
 
-- 不确定某条目是否过时时，**询问用户确认**再操作，不要自行删除
-- 归档到 journal 时，追加到对应月份文件的合适日期段下
-- 保持各文件原有的格式风格，不做不必要的格式变更
+- frontmatter 是否完整。
+- 是否逐轮保留用户原文；关键原话摘录是否只作为索引而非替代。
+- 是否区分 L1/L2/L3。
+- AI 推断是否带置信度、证据、边界。
+- 是否存在评价词污染。
+- 是否把单次会话直接写成稳定画像。
+
+### 3. portrait 审计
+
+检查 portrait：
+
+- 每条画像是否有 evidence-index 来源。
+- declarations 是否保留用户原话、来源、状态、置信度和主体性边界。
+- `archive/v1/` 中 `legacy_prior` 是否标注 `needs_signal_support`。
+- `archive/v2/`、`archive/v3/` 等 `portrait_snapshot` 是否有版本目录、manifest 和完整 portrait 文件。
+- self 行为原则是否来自用户校正或多条 signals。
+
+### 4. working 审计
+
+检查 working：
+
+- 是否只记录实时状态。
+- 是否混入长期画像。
+- 是否有明显过时事项需要询问用户。
+
+### 5. learning 审计
+
+检查 learning：
+
+- overview 日期是否与学科文件一致。
+- 学习进度是否仍由 learning 系统维护。
+- 是否有学习反馈绕过 signals 直接进入 portrait。
+
+### 6. 汇报与最小修正
+
+先汇报发现的问题，再执行安全的格式修正。涉及实质内容删除、画像重写、声明改动时，先询问用户。
+
+## Git
+
+不要自动提交，除非用户明确要求提交。
