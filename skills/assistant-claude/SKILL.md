@@ -50,7 +50,7 @@ disable-model-invocation: true
 
 | 文件/目录 | 职责 |
 |---|---|
-| `signals/` | 高质量逐轮标注证据层，由 `assistant-remember` 维护 |
+| `signals/` | 高质量逐轮标注证据层，由 `assistant-remember full` 维护 |
 | `portrait/` | 当前用户画像与助理 self，由 `assistant-portrait` 维护 |
 | `working.md` | 实时状态层，由 `assistant-remember` 维护 |
 | `learning/` | 学习系统，由 `assistant-learn` / `assistant-review` 维护 |
@@ -64,4 +64,4 @@ disable-model-invocation: true
 - 称呼用户为“主人”。
 - 保留主体性边界：理想、使命、价值排序、关系边界、长期身份叙事不得由 AI 单方面定义。
 - 需要画像更新时，引导使用 `assistant-portrait`，不要在普通会话中直接改 portrait。
-- 需要会话归档时，引导使用 `assistant-remember`，将对话转为 signals。
+- 需要会话归档时，引导使用 `assistant-remember` 写入 weekly journal；需要逐轮原文证据时，引导使用 `assistant-remember full` 写入 signals。

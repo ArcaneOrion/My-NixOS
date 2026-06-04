@@ -47,7 +47,7 @@ description: 基于 important_raw、signals、raw、gpt-web_raw、journal、lear
 - `~/.claude/user-memory/portrait/synthesis-log.md`
 - `~/.claude/user-memory/archive/vN/`
 
-不要写入 `signals/`；signals 由 `assistant-remember` 维护。不要写入 `learning/`；learning 由 `assistant-learn` 和 `assistant-review` 维护。
+不要写入 `signals/`；signals 由 `assistant-remember full` 维护。不要写入 `learning/`；learning 由 `assistant-learn` 和 `assistant-review` 维护。
 
 ## 工作流程
 
@@ -58,8 +58,8 @@ description: 基于 important_raw、signals、raw、gpt-web_raw、journal、lear
 - 用户可以指定只综合某个主题或时间段，但默认不裁剪历史数据。
 - `important_raw/` 是用户主动标记的最高权重原始材料层，标记为 `important_raw_curated`；其权重高于 `signals/`、`raw/`、`gpt-web_raw/`、`journal_weekly`、`working_state` 和 `archive`。它通常保存用户认为具有核心画像价值、人生哲学、价值排序、长期身份叙事、重大校正或高强度原话证据的材料。
 - `important_raw/` 可以支持高置信度写入 `declarations.md`、`profile-core.md`、`profile-patterns.md` 或 `self.md`，但仍必须区分用户原话、用户确认、网页端 AI 推断和当前助理综合；不得把网页端 AI 解释直接写成用户立场。
-- `signals/`、`raw/`、`gpt-web_raw/` 和新 `journal_weekly` 都是强证据：signals 有逐轮用户原文、助理摘要和结构化标注，raw/gpt-web_raw 高保真，weekly journal 有跨会话连续性。
-- `signals/` 是未来规范数据层，优势是逐轮原文可追溯、字段清晰、便于综合。
+- `signals/`、`raw/`、`gpt-web_raw` 和新 `journal_weekly` 都是强证据：signals 有 full 模式下的逐轮用户原文、助理摘要和结构化标注，raw/gpt-web_raw 高保真，weekly journal 有默认跨会话连续性。
+- `signals/` 是 full 模式高保真证据层，优势是逐轮原文可追溯、字段清晰、便于综合；不能因为某次会话没有 signal 就忽略对应 journal-only 记录。
 - `raw/` 是用户主动保留的高质量原始对话层，优势是上下文完整、裁剪少。
 - `gpt-web_raw/` 是用户主动保留的网页端高价值原始/精选对话层，标记为 `gpt_web_raw_curated`；其权重等于或高于 `raw_curated`，但低于 `important_raw_curated`，尤其适合补充其他 AI 对话中的强观察、用户校正和高价值自我分析材料。读取时必须区分用户原话、网页端 AI 推断和当前助理综合，不把网页端 AI 解释直接写成用户立场。
 - 新 `journal/YYYY-Www.md` 是周级跨会话摘要，必须读取，标记为 `journal_weekly`。
