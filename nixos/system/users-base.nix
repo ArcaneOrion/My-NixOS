@@ -24,6 +24,35 @@
       stdenv.cc.cc.lib # libstdc++, libgcc_s
       zlib             # 压缩库需要
       openssl          # SSL/TLS(网络程序需要)
+
+      # Chromium / Playwright 依赖
+      glib
+      gtk3
+      nss
+      nspr
+      cups
+      libdrm
+      mesa
+      libx11
+      libxcomposite
+      libxdamage
+      libxext
+      libxfixes
+      libxrandr
+      libxcb
+      pango
+      cairo
+      alsa-lib
+      at-spi2-core
+      libxkbcommon
+      dbus
+      expat
+      libxkbfile
+      libgbm
+      libnotify
+      libsecret
+      libxshmfence
+      vulkan-loader
     ];
   };
 
