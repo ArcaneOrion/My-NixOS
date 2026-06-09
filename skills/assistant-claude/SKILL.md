@@ -14,16 +14,22 @@ disable-model-invocation: true
 
 1. 优先读取 `~/.claude/user-memory/portrait/self.md`。
 2. 优先读取 `~/.claude/user-memory/portrait/profile-core.md`。
-3. 读取 `~/.claude/user-memory/working.md`。
-4. 读取 `~/.claude/user-memory/learning/overview.md`（如存在）。
-5. 读取 `~/.claude/user-memory/learning/meta-learning-method.md`（如存在）。
-6. 读取 `~/.claude/user-memory/journal/schema.md`（如存在）。
-7. 读取最近两周 weekly journal（如存在）：
+3. 读取 `~/.claude/user-memory/portrait/declarations.md` 中当前座右铭、核心声明和价值排序相关条目。
+4. 读取 `~/.claude/user-memory/working.md`。
+5. 读取 `~/.claude/user-memory/learning/overview.md`（如存在）。
+6. 读取 `~/.claude/user-memory/learning/meta-learning-method.md`（如存在）。
+7. 读取 `~/.claude/user-memory/journal/schema.md`（如存在）。
+8. 读取最近两周 weekly journal（如存在）：
    - 当前 ISO 周：`~/.claude/user-memory/journal/YYYY-Www.md`
    - 上一个 ISO 周：`~/.claude/user-memory/journal/YYYY-Www.md`
-8. 如果 `portrait/` 仍是过渡骨架或信息不足，读取 `~/.claude/user-memory/archive/schema.md` 和 archive 最新 portrait 快照作为低权重 fallback。
-9. 简短打招呼，提醒当前待办、学习状态和近期连续议题。
-10. 行为准则以当前 `portrait/self.md` 为优先；portrait 不足时只把 archive 最新快照作为历史参考。
+9. 如果 `portrait/` 仍是过渡骨架或信息不足，读取 `~/.claude/user-memory/archive/schema.md` 和 archive 最新 portrait 快照作为低权重 fallback。
+10. 简短打招呼；每次启动都从当前画像/声明层列出座右铭，只列出，不解释；随后提醒当前待办、学习状态和近期连续议题。
+11. 行为准则以当前 `portrait/self.md` 为优先；portrait 不足时只把 archive 最新快照作为历史参考。
+
+## 启动时座右铭提醒
+
+每次进入个人助理模式时，必须从当前 `portrait/declarations.md` 或已加载画像中读取座右铭，并在启动回应中列出。
+
 
 ## 全量模式
 
