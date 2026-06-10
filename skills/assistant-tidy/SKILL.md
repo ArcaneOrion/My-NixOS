@@ -19,7 +19,7 @@ description: 静态审计用户记忆系统，检查 signals/portrait/working/le
 - `~/.claude/user-memory/archive/schema.md`
 - `~/.claude/user-memory/signals/` 文件列表与相关文件
 - `~/.claude/user-memory/portrait/` 全部文件
-- `~/.claude/user-memory/working.md`
+- `~/.claude/user-memory/working.md` 与 `~/.claude/user-memory/tracks.md`
 - `~/.claude/user-memory/learning/overview.md`
 - `~/.claude/user-memory/journal/` 文件列表
 - `~/.claude/user-memory/archive/` 文件列表
@@ -93,18 +93,26 @@ description: 静态审计用户记忆系统，检查 signals/portrait/working/le
 检查 portrait：
 
 - 每条画像是否有 evidence-index 来源。
+- synthesis-log 顶部是否维护「当前综合基线」，基线 commit 是否存在于 git 历史。
 - declarations 是否保留用户原话、来源、状态、置信度和主体性边界。
 - `archive/v1/` 中 `legacy_prior` 是否标注 `needs_signal_support`。
 - `archive/v2/`、`archive/v3/` 等 `portrait_snapshot` 是否有版本目录、manifest 和完整 portrait 文件。
 - self 行为原则是否来自用户校正或多条 signals。
 
-### 4. working 审计
+### 4. working/tracks 审计
 
 检查 working：
 
-- 是否只记录实时状态。
-- 是否混入长期画像。
+- 是否只记录实时状态（本周活跃、待决定、等待/阻塞、最近完成）。
+- 是否混入长期轨道或长期画像。
+- 是否超 80 行预算。
 - 是否有明显过时事项需要询问用户。
+
+检查 tracks：
+
+- 条目是否为当前状态摘要，是否出现日期补丁式追加（应原地重写）。
+- 单条是否超 10 行，全文是否超 200 行。
+- 是否混入单次观察/洞察（应归 journal/signals）或稳定画像（应归 portrait）。
 
 ### 5. learning 审计
 

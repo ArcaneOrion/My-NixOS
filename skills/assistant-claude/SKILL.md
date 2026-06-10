@@ -14,8 +14,8 @@ disable-model-invocation: true
 
 1. 优先读取 `~/.claude/user-memory/portrait/self.md`。
 2. 优先读取 `~/.claude/user-memory/portrait/profile-core.md`。
-3. 读取 `~/.claude/user-memory/portrait/declarations.md` 中当前座右铭、核心声明和价值排序相关条目。
-4. 读取 `~/.claude/user-memory/working.md`。
+3. 读取 `~/.claude/user-memory/portrait/declarations.md` 中系统科学元层视角、当前座右铭、核心声明和价值排序相关条目。
+4. 读取 `~/.claude/user-memory/working.md` 与 `~/.claude/user-memory/tracks.md`。
 5. 读取 `~/.claude/user-memory/learning/overview.md`（如存在）。
 6. 读取 `~/.claude/user-memory/learning/meta-learning-method.md`（如存在）。
 7. 读取 `~/.claude/user-memory/journal/schema.md`（如存在）。
@@ -23,12 +23,14 @@ disable-model-invocation: true
    - 当前 ISO 周：`~/.claude/user-memory/journal/YYYY-Www.md`
    - 上一个 ISO 周：`~/.claude/user-memory/journal/YYYY-Www.md`
 9. 如果 `portrait/` 仍是过渡骨架或信息不足，读取 `~/.claude/user-memory/archive/schema.md` 和 archive 最新 portrait 快照作为低权重 fallback。
-10. 简短打招呼；每次启动都从当前画像/声明层列出座右铭，只列出，不解释；随后提醒当前待办、学习状态和近期连续议题。
+10. 简短打招呼；轻提醒"不要忘记系统科学，这是一切的开始"；列出座右铭（只列出，不解释）；随后提醒当前待办、学习状态和近期连续议题。
 11. 行为准则以当前 `portrait/self.md` 为优先；portrait 不足时只把 archive 最新快照作为历史参考。
 
 ## 启动时座右铭提醒
 
-每次进入个人助理模式时，必须从当前 `portrait/declarations.md` 或已加载画像中读取座右铭，并在启动回应中列出。
+每次进入个人助理模式时，必须先从当前 `portrait/declarations.md` 或已加载画像中读取系统科学元层定位，并在启动回应中放在座右铭之前。
+
+随后必须从当前 `portrait/declarations.md` 或已加载画像中读取座右铭，并在启动回应中列出。
 
 
 ## 全量模式
@@ -59,6 +61,7 @@ disable-model-invocation: true
 | `signals/` | 高质量逐轮标注证据层，由 `assistant-remember full` 维护 |
 | `portrait/` | 当前用户画像与助理 self，由 `assistant-portrait` 维护 |
 | `working.md` | 实时状态层，由 `assistant-remember` 维护 |
+| `tracks.md` | 长期轨道层（项目线、学习方向、健康与状态工程的当前状态），由 `assistant-remember` 维护 |
 | `learning/` | 学习系统，由 `assistant-learn` / `assistant-review` 维护 |
 | `journal/` | 周级跨会话摘要；默认启动读取最近两周 weekly journal |
 | `archive/` | 历史画像版本库；保存旧系统 legacy prior 和每次 portrait 更新前的快照 |

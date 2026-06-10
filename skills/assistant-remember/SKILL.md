@@ -1,16 +1,16 @@
 ---
 name: assistant-remember
-description: 默认将当前会话整理为周级 journal 跨会话摘要；用户明确调用 assistant-remember full 时，额外写入完整逐轮 session signal；按需维护 working.md，不直接写入 profile/self 画像文件。
+description: 默认将当前会话整理为周级 journal 跨会话摘要；用户明确调用 assistant-remember full 时，额外写入完整逐轮 session signal；按需维护 working.md 与 tracks.md，不直接写入 profile/self 画像文件。
 ---
 
 # 会话记忆记录
 
 ## 定位
 
-从当前对话中提取可保存内容，写入 `~/.claude/user-memory/journal/`，按需维护 `working.md`。默认只记录周级连续性，不写逐轮 `signals/`；只有用户明确调用 `assistant-remember full` 时，才写入完整逐轮 session signal。
+从当前对话中提取可保存内容，写入 `~/.claude/user-memory/journal/`，按需维护 `working.md` 与 `tracks.md`。默认只记录周级连续性，不写逐轮 `signals/`；只有用户明确调用 `assistant-remember full` 时，才写入完整逐轮 session signal。
 
-- 默认 `assistant-remember`：只写 weekly journal；按需更新 `working.md`；不写 `signals/`。
-- `assistant-remember full`：写完整逐轮 `signals/`，并同步写 weekly journal；按需更新 `working.md`。
+- 默认 `assistant-remember`：只写 weekly journal；按需更新 `working.md` / `tracks.md`；不写 `signals/`。
+- `assistant-remember full`：写完整逐轮 `signals/`，并同步写 weekly journal；按需更新 `working.md` / `tracks.md`。
 - `journal/` 是周级跨会话摘要：按时间和主题串联多会话变化，不承担逐字转录职责。
 - `signals/` 是会话级逐轮标注证据：一场会话一个文件，按时间顺序一比一记录用户每条实质消息原文，并为对应助理回答写摘要。
 - 记录证据，不生成画像；画像更新交给 `assistant-portrait`。
@@ -21,7 +21,7 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 
 1. `~/.claude/user-memory/journal/schema.md`
 2. 当前 ISO 周的 `~/.claude/user-memory/journal/YYYY-Www.md`（不存在则创建）
-3. `~/.claude/user-memory/working.md`
+3. `~/.claude/user-memory/working.md` 与 `~/.claude/user-memory/tracks.md`
 4. `~/.claude/user-memory/portrait/declarations.md`（按需，避免误把既有声明重复写入）
 5. `~/.claude/user-memory/portrait/evidence-index.md`（按需，避免重复画像更新提示）
 
@@ -46,6 +46,8 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 按需写入：
 
 - `~/.claude/user-memory/working.md`
+- `~/.claude/user-memory/tracks.md`
+- `~/.claude/user-memory/fitness.md`（健身日志，主人报告锻炼时）
 - `~/.claude/user-memory/raw/YYYY-MM-DD-topic.md`（仅用户明确同意后）
 
 禁止直接写入：
@@ -56,6 +58,21 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 - `portrait/self.md`
 - `portrait/declarations.md`
 - 旧根目录 `profile*.md` / `self.md`
+
+## working 与 tracks 边界
+
+`working.md` 是实时状态层；`~/.claude/user-memory/tracks.md` 是长期轨道层，保存跨月项目、学习线、就诊等慢变事项的当前状态摘要。两者都由本 skill 维护。
+
+轨道条目原地重写为当前状态，不打日期补丁；演变过程由 journal 承载，稳定模式由 `assistant-portrait` 沉淀到 portrait。
+
+判断规则（决定一条内容写入 working 还是 tracks）：
+
+1. 预计两周内会变化或可关闭的事项（本周活跃、待决定、等待/阻塞、最近完成）写入 `working.md`；跨月持续、没有明确截止的项目线、学习方向、健康与状态工程写入 `tracks.md`。
+2. 有明确完成/关闭判据的是任务，进 working，完成后归入「最近完成」并在下次整理时删除；只有"当前状态"、没有终点的是轨道，进 tracks。
+3. 未确认执行的候选方案先进 working「待决定」；确认长期执行后迁入 tracks 并从 working 删除。
+4. 单次观察、数据点、洞察和讨论过程不进 working/tracks；它们属于 journal/signals 证据层，稳定后由 `assistant-portrait` 沉淀到 portrait。working/tracks 只保留可执行的当前状态与协议，禁止日期补丁式追加。
+5. 预算：`working.md` ≤ 80 行；`tracks.md` 每条 ≤ 10 行、全文 ≤ 200 行。超预算必须先收敛（删过时项、压缩条目、把细节交还证据层）再写入。
+6. 孤儿文件归属：`fitness.md` 为健身日志，由本 skill 按需写入；每日重复任务记入 tracks「每日重复」。
 
 ## 写入判断
 
@@ -152,16 +169,18 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 - `record_mode：full_signal`
 - `signal：signals/YYYY-MM/YYYY-MM-DD-topic.md`
 
-### 6. 维护 working.md
+### 6. 维护 working.md 与 tracks.md
 
 如果本次会话改变了实时状态，更新 `working.md`：
 
-- 新增进行中事项。
+- 新增本周活跃、待决定事项。
 - 更新阻塞/等待。
-- 记录最近完成。
+- 记录最近完成，并删除上次整理前已完成的旧项。
 - 移除或改写明显过时的实时状态。
 
-只维护状态，不把长期画像写入 working。
+如果本次会话改变了长期轨道（项目线、学习方向、健康与状态工程）的当前状态，按「working 与 tracks 边界」原地重写 `tracks.md` 对应条目，不追加日期补丁。
+
+只维护状态，不把长期画像写入 working/tracks。
 
 ### 7. raw 例外存档
 
@@ -174,7 +193,7 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 - record mode。
 - journal 周记录。
 - signal 文件（仅 full 模式）。
-- working/raw（如有）。
+- working/tracks/raw（如有）。
 
 说明哪些内容只是 portrait 更新提示，未直接进入 portrait。
 
@@ -207,6 +226,8 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
    - `journal/YYYY-Www.md`
    - `signals/YYYY-MM/YYYY-MM-DD-topic.md`（仅 full 模式）
    - `working.md`
+   - `tracks.md`（如本次写入）
+   - `fitness.md`（如本次写入）
    - `raw/YYYY-MM-DD-topic.md`（如本次写入）
 4. 不使用 `git add .` 或 `git add -A`。
 5. 如果没有变更，跳过提交并汇报“无变更可提交”。

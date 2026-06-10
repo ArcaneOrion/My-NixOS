@@ -1,6 +1,6 @@
 ---
 name: assistant-portrait
-description: 基于 important_raw、signals、raw、gpt-web_raw、journal、learning/working 和 archive 历史画像直接生成并维护 portrait/ 用户画像与 assistant self，同时保留证据链、版本快照、置信度、边界和纠错记录。
+description: 默认增量综合：以 synthesis-log 记录的综合基线为界，用 important_raw 和基线后新增的 signals/raw/journal/learning/working 材料修订 portrait/ 用户画像与 assistant self；保留证据链、版本快照、置信度、边界和纠错记录；assistant-portrait full 触发全量重综合。
 ---
 
 # Assistant Portrait
@@ -9,30 +9,48 @@ description: 基于 important_raw、signals、raw、gpt-web_raw、journal、lear
 
 从 `~/.claude/user-memory/` 的高质量历史材料中综合用户画像与助理行为规则，并默认直接写入 `portrait/`。核心目标是用大量真实数据和 AI 综合能力生成可演化的数字画像，而不是把画像更新变成繁琐审批流。
 
+默认增量综合：当前 portrait 被视为基线之前全部历史材料的综合结果，每次只用基线之后的新材料修订画像，不重放历史。
+
 画像写入不是最终定稿；每条内容都必须保留来源类型、证据链、置信度、边界和状态，方便后续审计、纠错、降级或删除。每次写入新画像前，必须先把当前 `portrait/` 归档到 `archive/`，形成 v1/v2/v3... 的历史画像序列。
 
 ## 读取范围
 
-默认全量读取用于画像生成的历史材料，并按来源质量加权。读取：
+默认增量读取：信任当前 portrait，只重读综合基线之后的新材料。读取：
 
 1. `~/.claude/user-memory/signals/schema.md`
 2. `~/.claude/user-memory/signals/quality-criteria.md`
 3. `~/.claude/user-memory/journal/schema.md`
 4. `~/.claude/user-memory/archive/schema.md`
-5. `~/.claude/user-memory/portrait/declarations.md`
-6. `~/.claude/user-memory/portrait/evidence-index.md`
-7. `~/.claude/user-memory/portrait/synthesis-log.md`
-8. `~/.claude/user-memory/working.md`
-9. `~/.claude/user-memory/learning/overview.md` 与相关学科文件
-10. `~/.claude/user-memory/important_raw/` 全量，作为 `important_raw_curated`，最高权重
-11. `~/.claude/user-memory/signals/` 全量，作为 `signal_structured`
-12. `~/.claude/user-memory/raw/` 全量，作为 `raw_curated`
-13. `~/.claude/user-memory/gpt-web_raw/` 全量，作为 `gpt_web_raw_curated`
-14. `~/.claude/user-memory/journal/YYYY-Www.md` 周级 journal，作为 `journal_weekly`
-15. 历史 `~/.claude/user-memory/journal/YYYY-MM.md` 月度 journal，作为 `journal_compressed`
-16. `~/.claude/user-memory/archive/` 全量，区分 `legacy_prior` 与 `portrait_snapshot`
+5. `~/.claude/user-memory/portrait/` 全量（self、profile 三件、declarations、evidence-index、synthesis-log）
+6. `~/.claude/user-memory/working.md`
+7. `~/.claude/user-memory/learning/overview.md` 与相关学科文件
+8. `~/.claude/user-memory/important_raw/` 全量，作为 `important_raw_curated`，最高权重；体积小且为用户主动标记层，不参与增量裁剪
+9. 综合基线之后新增或修改的 `signals/` 文件，作为 `signal_structured`
+10. 综合基线之后新增或修改的 `raw/` 文件，作为 `raw_curated`
+11. 综合基线之后新增或修改的 `journal/YYYY-Www.md`，作为 `journal_weekly`；历史月度 `journal/YYYY-MM.md` 为 `journal_compressed`，只在全量综合时读取
+12. `archive/` 最近两个 `portrait_snapshot` 版本目录（vN 与 vN-1，含 manifest），用于版本连续性；更早快照与 `archive/v1/` legacy prior 默认不读
 
-读取时不要追求“纯净数据源”，而要保留来源类型、证据权重和置信度。旧 journal 不需要回改为新 schema；它作为历史压缩数据继续参与画像生成；新 weekly journal 是跨会话连续性强证据。archive 既保存旧系统先验，也保存每次 portrait 更新前的历史画像版本。
+### 综合基线机制
+
+- 基线记录在 `portrait/synthesis-log.md` 顶部「当前综合基线」：一个 `~/.claude/user-memory` 仓库 commit hash 加日期。
+- 综合开始时先执行 `git -C ~/.claude/user-memory rev-parse HEAD` 记下本次新基线 `NEW_HEAD`，再列出增量材料：
+
+```text
+git -C ~/.claude/user-memory diff --name-only <旧基线> <NEW_HEAD> -- signals raw journal learning working.md
+```
+
+- 列出的文件全部读取，不按"重要性"二次裁剪增量集。
+- 综合完成后把「当前综合基线」更新为 `NEW_HEAD`。综合期间其他 skill 新提交的材料会落入下一次增量窗口，不会丢失。
+
+### 全量综合
+
+只在以下情况执行全量综合（读取 important_raw/signals/raw/journal 全部历史；archive 仍只读最近两个版本）：
+
+- 用户明确调用 `assistant-portrait full` 或要求全量重综合。
+- `synthesis-log.md` 找不到「当前综合基线」。
+- 旧基线 commit 不存在于 git 历史。
+
+读取时不要追求“纯净数据源”，而要保留来源类型、证据权重和置信度。旧 journal 不需要回改为新 schema。archive 既保存旧系统先验，也保存每次 portrait 更新前的历史画像版本。
 
 ## 输出文件
 
@@ -53,22 +71,18 @@ description: 基于 important_raw、signals、raw、gpt-web_raw、journal、lear
 
 ### 1. 确定综合范围
 
-默认全量综合 `important_raw/`、`signals/`、`raw/`、`gpt-web_raw/`、`journal/`、`learning/`、`working.md`、`archive/`：
+按「读取范围」的增量规则确定本次输入：
 
-- 用户可以指定只综合某个主题或时间段，但默认不裁剪历史数据。
-- `important_raw/` 是用户主动标记的最高权重原始材料层，标记为 `important_raw_curated`；其权重高于 `signals/`、`raw/`、`gpt-web_raw/`、`journal_weekly`、`working_state` 和 `archive`。它通常保存用户认为具有核心画像价值、人生哲学、价值排序、长期身份叙事、重大校正或高强度原话证据的材料。
-- `important_raw/` 可以支持高置信度写入 `declarations.md`、`profile-core.md`、`profile-patterns.md` 或 `self.md`，但仍必须区分用户原话、用户确认、网页端 AI 推断和当前助理综合；不得把网页端 AI 解释直接写成用户立场。
-- `signals/`、`raw/`、`gpt-web_raw` 和新 `journal_weekly` 都是强证据：signals 有 full 模式下的逐轮用户原文、助理摘要和结构化标注，raw/gpt-web_raw 高保真，weekly journal 有默认跨会话连续性。
-- `signals/` 是 full 模式高保真证据层，优势是逐轮原文可追溯、字段清晰、便于综合；不能因为某次会话没有 signal 就忽略对应 journal-only 记录。
-- `raw/` 是用户主动保留的高质量原始对话层，优势是上下文完整、裁剪少。
-- `gpt-web_raw/` 是用户主动保留的网页端高价值原始/精选对话层，标记为 `gpt_web_raw_curated`；其权重等于或高于 `raw_curated`，但低于 `important_raw_curated`，尤其适合补充其他 AI 对话中的强观察、用户校正和高价值自我分析材料。读取时必须区分用户原话、网页端 AI 推断和当前助理综合，不把网页端 AI 解释直接写成用户立场。
-- 新 `journal/YYYY-Www.md` 是周级跨会话摘要，必须读取，标记为 `journal_weekly`。
-- 历史 `journal/YYYY-MM.md` 是压缩叙事层，必须读取，标记为 `journal_compressed` / mixed L1/L2。
-- `archive/v1/` 中旧系统迁移快照标记为 `legacy_prior`，权重低，只作历史连续性和缺口提示。
-- `archive/v2/`、`archive/v3/` 等 portrait 版本快照标记为 `portrait_snapshot`，用于理解画像演化、回溯和版本比较，不自动覆盖当前 portrait。
+- 读取 synthesis-log 顶部旧基线，记录 `NEW_HEAD`，用 git diff 列出基线后新增或修改的 signals/raw/journal/learning/working.md 文件，全部读取。
+- 用户可以指定只综合某个主题或时间段，也可以调用 `assistant-portrait full` 全量重综合；默认不裁剪增量集。
+- `important_raw/` 是用户主动标记的最高权重原始材料层，标记为 `important_raw_curated`，每次全量读取；其权重高于 `signals/`、`raw/`、`journal_weekly`、`working_state` 和 `archive`。它通常保存用户认为具有核心画像价值、人生哲学、价值排序、长期身份叙事、重大校正或高强度原话证据的材料。
+- `important_raw/` 可以支持高置信度写入 `declarations.md`、`profile-core.md`、`profile-patterns.md` 或 `self.md`，但仍必须区分用户原话、用户确认、其他 AI 推断和当前助理综合；不得把其他 AI 的解释直接写成用户立场。
+- `signals/`、`raw/` 和 `journal_weekly` 都是强证据：signals 有 full 模式下的逐轮用户原文、助理摘要和结构化标注，raw 高保真，weekly journal 有默认跨会话连续性。不能因为某次会话没有 signal 就忽略对应 journal-only 记录。
+- 当前 `portrait/` 全量读取：增量综合的本质是用新证据修订既有画像，不是重新生成。修订时遵守既有条目状态机——`user_confirmed` / `user_corrected` 条目不得被单次 AI 推断覆盖或降级。
+- `archive/` 最近两个 `portrait_snapshot` 版本用于理解最近的画像演化和回溯，不自动覆盖当前 portrait；`archive/v1/` legacy prior 与更早快照只在全量综合或用户要求版本对比时读取。
 - 多次综合差异审计默认关闭，用户明确要求时开启。
 
-如果数据量过大，先列出文件索引和主题，再按主题分批综合；不要因为体积大而默认忽略 important_raw/journal/raw/gpt-web_raw/archive。`important_raw/` 必须优先读取，不得因已有 signals 或 journal 摘要而跳过。
+如果单次增量材料过大，先列出文件索引和主题，再按主题分批综合；`important_raw/` 必须优先读取，不得因已有 signals 或 journal 摘要而跳过。
 
 ### 2. 审计输入质量
 
@@ -113,13 +127,12 @@ description: 基于 important_raw、signals、raw、gpt-web_raw、journal、lear
 ## 条目标题
 
 - 状态：active_ai_generated / user_confirmed / user_corrected / needs_review / deprecated
-- 来源类型：important_raw_curated / signal_structured / raw_curated / gpt_web_raw_curated / journal_weekly / journal_compressed / learning_record / working_state / legacy_prior / portrait_snapshot
+- 来源类型：important_raw_curated / signal_structured / raw_curated / journal_weekly / journal_compressed / learning_record / working_state / legacy_prior / portrait_snapshot
 - 置信度：低 / 中 / 中高 / 高
 - 证据：
   - important_raw/YYYY-MM-DD-topic.md#section
   - signals/YYYY-MM/YYYY-MM-DD-topic.md#section
   - raw/YYYY-MM-DD-topic.md#section
-  - gpt-web_raw/YYYY-MM-DD-topic.md#section
   - archive/vN/file.md#section
 - 边界/反证：...
 - 最近审计：YYYY-MM-DD
@@ -149,10 +162,11 @@ description: 基于 important_raw、signals、raw、gpt-web_raw、journal、lear
 
 写入完成后，向用户简短汇报：
 
+- 本次综合基线窗口（旧基线 → 新基线）与增量文件清单。
 - 归档了哪个 archive 版本目录。
 - 写入了哪些 portrait 文件。
 - 哪些条目是高置信度，哪些是 `needs_review`。
-- 哪些条目来自 important_raw/raw/gpt-web_raw/signals/weekly journal/历史 journal/archive。
+- 哪些条目来自 important_raw/raw/signals/weekly journal/历史 journal/archive。
 - 是否发现冲突、反证或高频污染风险。
 - 用户可以直接要求修改、降级、删除、恢复或确认某条画像。
 
@@ -165,6 +179,7 @@ description: 基于 important_raw、signals、raw、gpt-web_raw、journal、lear
 1. 更新对应 `portrait/*.md` 文件。
 2. 更新 `portrait/evidence-index.md`，记录证据链、状态、反证和 archive 版本来源。
 3. 更新 `portrait/synthesis-log.md`，记录本次输入范围、归档目录、权重、写入结果、降级/删除、后续疑问。
+4. 把 `synthesis-log.md` 顶部「当前综合基线」更新为本次综合开始时记录的 `NEW_HEAD` 和日期。
 
 ### 8. Git 版本记录
 
@@ -252,3 +267,4 @@ self 是助理操作系统，更新条件更严格。
 - 不替用户最终定义理想、使命、价值排序或身份结论；声明层写入必须保留用户原话和可纠错状态。
 - 不因追求流程安全而阻塞画像生成；质量控制依靠证据链、置信度、状态、版本快照和后续审计。
 - 不在生成新 portrait 前跳过 archive 版本归档。
+- 不在增量模式下重读基线之前的 signals/raw/journal 或 archive 全量；追溯历史用 `assistant-portrait full` 或用户明确要求的版本对比。
