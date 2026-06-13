@@ -13,6 +13,7 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 - `assistant-remember full`：写完整逐轮 `signals/`，并同步写 weekly journal；按需更新 `working.md` / `tracks.md`。
 - `journal/` 是周级跨会话摘要：按时间和主题串联多会话变化，不承担逐字转录职责。
 - `signals/` 是会话级逐轮标注证据：一场会话一个文件，按时间顺序一比一记录用户每条实质消息原文，并为对应助理回答写摘要。
+- `arcane-training.md` 是 `Arcane Training Game` 随机算法与推演游戏维护文件：保存系统目的、训练池、推演规则、本周调度状态和反馈更新规则。
 - 记录证据，不生成画像；画像更新交给 `assistant-portrait`。
 
 ## 读取文件
@@ -22,8 +23,9 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 1. `~/.claude/user-memory/journal/schema.md`
 2. 当前 ISO 周的 `~/.claude/user-memory/journal/YYYY-Www.md`（不存在则创建）
 3. `~/.claude/user-memory/working.md` 与 `~/.claude/user-memory/tracks.md`
-4. `~/.claude/user-memory/portrait/declarations.md`（按需，避免误把既有声明重复写入）
-5. `~/.claude/user-memory/portrait/evidence-index.md`（按需，避免重复画像更新提示）
+4. `~/.claude/user-memory/arcane-training.md`（如本次涉及 `arcane` 随机算法、训练事件或推演游戏）
+5. `~/.claude/user-memory/portrait/declarations.md`（按需，避免误把既有声明重复写入）
+6. `~/.claude/user-memory/portrait/evidence-index.md`（按需，避免重复画像更新提示）
 
 `full` 模式额外读取：
 
@@ -47,6 +49,7 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 
 - `~/.claude/user-memory/working.md`
 - `~/.claude/user-memory/tracks.md`
+- `~/.claude/user-memory/arcane-training.md`（本次涉及 `arcane` 训练事件、推演游戏或周级调度状态变化时）
 - `~/.claude/user-memory/fitness.md`（健身日志，主人报告锻炼时）
 - `~/.claude/user-memory/raw/YYYY-MM-DD-topic.md`（仅用户明确同意后）
 
@@ -182,18 +185,36 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 
 只维护状态，不把长期画像写入 working/tracks。
 
-### 7. raw 例外存档
+### 7. 维护 arcane-training.md
+
+如果本次会话涉及用户单独输入 `arcane`、执行 `Arcane Training Game` 事件、推演游戏、训练调度算法或周级训练反馈，应按需更新：
+
+```text
+~/.claude/user-memory/arcane-training.md
+```
+
+维护规则：
+
+1. 保持文件开头的系统缘起、系统目的和边界稳定，除非用户明确校正。
+2. 训练池、推演游戏规则和事件生成规则只在用户明确调整机制时修改。
+3. “本周调度状态”可按本次反馈更新，精确到周，不追求日级精确计划。
+4. 每次 `arcane` 事件的详细过程写入 weekly journal；本文件只保留周级状态、权重和反馈摘要。
+5. 记录反馈时区分：事件类型、完成/部分完成/未启动、错因或卡点、下周调度影响。
+6. `working.md` 只保留 `Arcane Training Game` 的本周运行状态，`tracks.md` 只保留长期轨道入口；细节放在本文件。
+7. 不直接写 portrait；连续多次形成稳定偏好、能力变化或助理行为规则变化时，只写 portrait 更新提示。
+
+### 8. raw 例外存档
 
 只有当对话属于重大决策、核心命题、深度认知框架，且用户明确同意时，才写入 `raw/`。
 
-### 8. 汇报结果
+### 9. 汇报结果
 
 汇报写入了哪些文件：
 
 - record mode。
 - journal 周记录。
 - signal 文件（仅 full 模式）。
-- working/tracks/raw（如有）。
+- working/tracks/arcane-training/raw（如有）。
 
 说明哪些内容只是 portrait 更新提示，未直接进入 portrait。
 
@@ -216,7 +237,7 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 
 ## Git
 
-每次成功写入 journal、signal、working 或 raw 后，必须在 `~/.claude/user-memory` 仓库自动提交一次版本记录，不再额外询问。
+每次成功写入 journal、signal、working、tracks、arcane-training 或 raw 后，必须在 `~/.claude/user-memory` 仓库自动提交一次版本记录，不再额外询问。
 
 提交规则：
 
@@ -227,6 +248,7 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
    - `signals/YYYY-MM/YYYY-MM-DD-topic.md`（仅 full 模式）
    - `working.md`
    - `tracks.md`（如本次写入）
+   - `arcane-training.md`（如本次写入）
    - `fitness.md`（如本次写入）
    - `raw/YYYY-MM-DD-topic.md`（如本次写入）
 4. 不使用 `git add .` 或 `git add -A`。
