@@ -7,7 +7,7 @@ description: 默认增量综合：以 synthesis-log 记录的综合基线为界�
 
 ## 定位
 
-从 `~/.claude/user-memory/` 的高质量历史材料中综合用户画像与助理行为规则，并默认直接写入 `portrait/`。核心目标是用大量真实数据和 AI 综合能力生成可演化的数字画像，而不是把画像更新变成繁琐审批流。
+从 `/home/arcaneorion/user-memory/` 的高质量历史材料中综合用户画像与助理行为规则，并默认直接写入 `portrait/`。核心目标是用大量真实数据和 AI 综合能力生成可演化的数字画像，而不是把画像更新变成繁琐审批流。
 
 默认增量综合：当前 portrait 被视为基线之前全部历史材料的综合结果，每次只用基线之后的新材料修订画像，不重放历史。
 
@@ -17,14 +17,14 @@ description: 默认增量综合：以 synthesis-log 记录的综合基线为界�
 
 默认增量读取：信任当前 portrait，只重读综合基线之后的新材料。读取：
 
-1. `~/.claude/user-memory/signals/schema.md`
-2. `~/.claude/user-memory/signals/quality-criteria.md`
-3. `~/.claude/user-memory/journal/schema.md`
-4. `~/.claude/user-memory/archive/schema.md`
-5. `~/.claude/user-memory/portrait/` 全量（self、profile 三件、declarations、evidence-index、synthesis-log）
-6. `~/.claude/user-memory/working.md`
-7. `~/.claude/user-memory/learning/overview.md` 与相关学科文件
-8. `~/.claude/user-memory/important_raw/` 全量，作为 `important_raw_curated`，最高权重；体积小且为用户主动标记层，不参与增量裁剪
+1. `/home/arcaneorion/user-memory/signals/schema.md`
+2. `/home/arcaneorion/user-memory/signals/quality-criteria.md`
+3. `/home/arcaneorion/user-memory/journal/schema.md`
+4. `/home/arcaneorion/user-memory/archive/schema.md`
+5. `/home/arcaneorion/user-memory/portrait/` 全量（self、profile 三件、declarations、evidence-index、synthesis-log）
+6. `/home/arcaneorion/user-memory/working.md`
+7. `/home/arcaneorion/user-memory/learning/overview.md` 与相关学科文件
+8. `/home/arcaneorion/user-memory/important_raw/` 全量，作为 `important_raw_curated`，最高权重；体积小且为用户主动标记层，不参与增量裁剪
 9. 综合基线之后新增或修改的 `signals/` 文件，作为 `signal_structured`
 10. 综合基线之后新增或修改的 `raw/` 文件，作为 `raw_curated`
 11. 综合基线之后新增或修改的 `journal/YYYY-Www.md`，作为 `journal_weekly`；历史月度 `journal/YYYY-MM.md` 为 `journal_compressed`，只在全量综合时读取
@@ -32,11 +32,11 @@ description: 默认增量综合：以 synthesis-log 记录的综合基线为界�
 
 ### 综合基线机制
 
-- 基线记录在 `portrait/synthesis-log.md` 顶部「当前综合基线」：一个 `~/.claude/user-memory` 仓库 commit hash 加日期。
-- 综合开始时先执行 `git -C ~/.claude/user-memory rev-parse HEAD` 记下本次新基线 `NEW_HEAD`，再列出增量材料：
+- 基线记录在 `portrait/synthesis-log.md` 顶部「当前综合基线」：一个 `/home/arcaneorion/user-memory` 仓库 commit hash 加日期。
+- 综合开始时先执行 `git -C /home/arcaneorion/user-memory rev-parse HEAD` 记下本次新基线 `NEW_HEAD`，再列出增量材料：
 
 ```text
-git -C ~/.claude/user-memory diff --name-only <旧基线> <NEW_HEAD> -- signals raw journal learning working.md
+git -C /home/arcaneorion/user-memory diff --name-only <旧基线> <NEW_HEAD> -- signals raw journal learning working.md
 ```
 
 - 列出的文件全部读取，不按"重要性"二次裁剪增量集。
@@ -56,14 +56,14 @@ git -C ~/.claude/user-memory diff --name-only <旧基线> <NEW_HEAD> -- signals 
 
 允许直接写入：
 
-- `~/.claude/user-memory/portrait/self.md`
-- `~/.claude/user-memory/portrait/profile-core.md`
-- `~/.claude/user-memory/portrait/profile-patterns.md`
-- `~/.claude/user-memory/portrait/profile-history.md`
-- `~/.claude/user-memory/portrait/declarations.md`
-- `~/.claude/user-memory/portrait/evidence-index.md`
-- `~/.claude/user-memory/portrait/synthesis-log.md`
-- `~/.claude/user-memory/archive/vN/`
+- `/home/arcaneorion/user-memory/portrait/self.md`
+- `/home/arcaneorion/user-memory/portrait/profile-core.md`
+- `/home/arcaneorion/user-memory/portrait/profile-patterns.md`
+- `/home/arcaneorion/user-memory/portrait/profile-history.md`
+- `/home/arcaneorion/user-memory/portrait/declarations.md`
+- `/home/arcaneorion/user-memory/portrait/evidence-index.md`
+- `/home/arcaneorion/user-memory/portrait/synthesis-log.md`
+- `/home/arcaneorion/user-memory/archive/vN/`
 
 不要写入 `signals/`；signals 由 `assistant-remember full` 维护。不要写入 `learning/`；learning 由 `assistant-learn` 和 `assistant-review` 维护。
 
@@ -183,12 +183,12 @@ git -C ~/.claude/user-memory diff --name-only <旧基线> <NEW_HEAD> -- signals 
 
 ### 8. Git 版本记录
 
-每次成功写入 portrait 和 archive 后，必须在 `~/.claude/user-memory` 仓库自动提交一次版本记录，不再额外询问。
+每次成功写入 portrait 和 archive 后，必须在 `/home/arcaneorion/user-memory` 仓库自动提交一次版本记录，不再额外询问。
 
 提交规则：
 
-1. 只在 `~/.claude/user-memory` 内执行 git 操作，使用 `git -C ~/.claude/user-memory ...`，不要影响当前项目仓库。
-2. 先运行 `git -C ~/.claude/user-memory status --short` 确认变更。
+1. 只在 `/home/arcaneorion/user-memory` 内执行 git 操作，使用 `git -C /home/arcaneorion/user-memory ...`，不要影响当前项目仓库。
+2. 先运行 `git -C /home/arcaneorion/user-memory status --short` 确认变更。
 3. 只 stage 本次 `assistant-portrait` 实际写入或修改的文件，例如：
    - `portrait/self.md`
    - `portrait/profile-core.md`

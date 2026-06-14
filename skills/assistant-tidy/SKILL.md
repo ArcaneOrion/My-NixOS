@@ -13,16 +13,16 @@ description: 静态审计用户记忆系统，检查 signals/portrait/working/le
 
 读取：
 
-- `~/.claude/user-memory/signals/schema.md`
-- `~/.claude/user-memory/signals/quality-criteria.md`
-- `~/.claude/user-memory/journal/schema.md`
-- `~/.claude/user-memory/archive/schema.md`
-- `~/.claude/user-memory/signals/` 文件列表与相关文件
-- `~/.claude/user-memory/portrait/` 全部文件
-- `~/.claude/user-memory/working.md` 与 `~/.claude/user-memory/tracks.md`
-- `~/.claude/user-memory/learning/overview.md`
-- `~/.claude/user-memory/journal/` 文件列表
-- `~/.claude/user-memory/archive/` 文件列表
+- `/home/arcaneorion/user-memory/signals/schema.md`
+- `/home/arcaneorion/user-memory/signals/quality-criteria.md`
+- `/home/arcaneorion/user-memory/journal/schema.md`
+- `/home/arcaneorion/user-memory/archive/schema.md`
+- `/home/arcaneorion/user-memory/signals/` 文件列表与相关文件
+- `/home/arcaneorion/user-memory/portrait/` 全部文件
+- `/home/arcaneorion/user-memory/working.md` 与 `/home/arcaneorion/user-memory/tracks.md`
+- `/home/arcaneorion/user-memory/learning/overview.md`
+- `/home/arcaneorion/user-memory/journal/` 文件列表
+- `/home/arcaneorion/user-memory/archive/` 文件列表
 
 根目录旧画像 `profile*.md` / `self.md` 若仍存在，只标记为迁移残留；fallback 应优先读取 archive 最新 `portrait_snapshot`，`archive/v1/` 只作为低权重 `legacy_prior`。
 

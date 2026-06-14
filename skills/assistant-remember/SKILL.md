@@ -7,7 +7,7 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 
 ## 定位
 
-从当前对话中提取可保存内容，写入 `~/.claude/user-memory/journal/`，按需维护 `working.md` 与 `tracks.md`。默认只记录周级连续性，不写逐轮 `signals/`；只有用户明确调用 `assistant-remember full` 时，才写入完整逐轮 session signal。
+从当前对话中提取可保存内容，写入 `/home/arcaneorion/user-memory/journal/`，按需维护 `working.md` 与 `tracks.md`。默认只记录周级连续性，不写逐轮 `signals/`；只有用户明确调用 `assistant-remember full` 时，才写入完整逐轮 session signal。
 
 - 默认 `assistant-remember`：只写 weekly journal；按需更新 `working.md` / `tracks.md`；不写 `signals/`。
 - `assistant-remember full`：写完整逐轮 `signals/`，并同步写 weekly journal；按需更新 `working.md` / `tracks.md`。
@@ -20,17 +20,17 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 
 默认模式开始前读取：
 
-1. `~/.claude/user-memory/journal/schema.md`
-2. 当前 ISO 周的 `~/.claude/user-memory/journal/YYYY-Www.md`（不存在则创建）
-3. `~/.claude/user-memory/working.md` 与 `~/.claude/user-memory/tracks.md`
-4. `~/.claude/user-memory/arcane-training.md`（如本次涉及 `arcane` 随机算法、训练事件或推演游戏）
-5. `~/.claude/user-memory/portrait/declarations.md`（按需，避免误把既有声明重复写入）
-6. `~/.claude/user-memory/portrait/evidence-index.md`（按需，避免重复画像更新提示）
+1. `/home/arcaneorion/user-memory/journal/schema.md`
+2. 当前 ISO 周的 `/home/arcaneorion/user-memory/journal/YYYY-Www.md`（不存在则创建）
+3. `/home/arcaneorion/user-memory/working.md` 与 `/home/arcaneorion/user-memory/tracks.md`
+4. `/home/arcaneorion/user-memory/arcane-training.md`（如本次涉及 `arcane` 随机算法、训练事件或推演游戏）
+5. `/home/arcaneorion/user-memory/portrait/declarations.md`（按需，避免误把既有声明重复写入）
+6. `/home/arcaneorion/user-memory/portrait/evidence-index.md`（按需，避免重复画像更新提示）
 
 `full` 模式额外读取：
 
-1. `~/.claude/user-memory/signals/schema.md`
-2. `~/.claude/user-memory/signals/quality-criteria.md`
+1. `/home/arcaneorion/user-memory/signals/schema.md`
+2. `/home/arcaneorion/user-memory/signals/quality-criteria.md`
 
 不要默认读取全部 portrait；只在判断重复或引用既有画像时按需读取。
 
@@ -38,20 +38,20 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 
 默认模式必须写入：
 
-- `~/.claude/user-memory/journal/YYYY-Www.md`
+- `/home/arcaneorion/user-memory/journal/YYYY-Www.md`
 
 `full` 模式必须写入：
 
-- `~/.claude/user-memory/signals/YYYY-MM/YYYY-MM-DD-topic.md`
-- `~/.claude/user-memory/journal/YYYY-Www.md`
+- `/home/arcaneorion/user-memory/signals/YYYY-MM/YYYY-MM-DD-topic.md`
+- `/home/arcaneorion/user-memory/journal/YYYY-Www.md`
 
 按需写入：
 
-- `~/.claude/user-memory/working.md`
-- `~/.claude/user-memory/tracks.md`
-- `~/.claude/user-memory/arcane-training.md`（本次涉及 `arcane` 训练事件、推演游戏或周级调度状态变化时）
-- `~/.claude/user-memory/fitness.md`（健身日志，主人报告锻炼时）
-- `~/.claude/user-memory/raw/YYYY-MM-DD-topic.md`（仅用户明确同意后）
+- `/home/arcaneorion/user-memory/working.md`
+- `/home/arcaneorion/user-memory/tracks.md`
+- `/home/arcaneorion/user-memory/arcane-training.md`（本次涉及 `arcane` 训练事件、推演游戏或周级调度状态变化时）
+- `/home/arcaneorion/user-memory/fitness.md`（健身日志，主人报告锻炼时）
+- `/home/arcaneorion/user-memory/raw/YYYY-MM-DD-topic.md`（仅用户明确同意后）
 
 禁止直接写入：
 
@@ -64,7 +64,7 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 
 ## working 与 tracks 边界
 
-`working.md` 是实时状态层；`~/.claude/user-memory/tracks.md` 是长期轨道层，保存跨月项目、学习线、就诊等慢变事项的当前状态摘要。两者都由本 skill 维护。
+`working.md` 是实时状态层；`/home/arcaneorion/user-memory/tracks.md` 是长期轨道层，保存跨月项目、学习线、就诊等慢变事项的当前状态摘要。两者都由本 skill 维护。
 
 轨道条目原地重写为当前状态，不打日期补丁；演变过程由 journal 承载，稳定模式由 `assistant-portrait` 沉淀到 portrait。
 
@@ -109,7 +109,7 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 写入或更新当前 ISO 周文件：
 
 ```text
-~/.claude/user-memory/journal/YYYY-Www.md
+/home/arcaneorion/user-memory/journal/YYYY-Www.md
 ```
 
 journal 每个被记录的会话都写一条，按时间顺序追加。
@@ -134,7 +134,7 @@ journal 每个被记录的会话都写一条，按时间顺序追加。
 使用：
 
 ```text
-~/.claude/user-memory/signals/YYYY-MM/YYYY-MM-DD-topic.md
+/home/arcaneorion/user-memory/signals/YYYY-MM/YYYY-MM-DD-topic.md
 ```
 
 一次会话一个文件；不要按日合并多个主题。`topic` 用 2-5 个英文或拼音短词表达主主题。
@@ -190,7 +190,7 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 如果本次会话涉及用户单独输入 `arcane`、执行 `Arcane Training Game` 事件、推演游戏、训练调度算法或周级训练反馈，应按需更新：
 
 ```text
-~/.claude/user-memory/arcane-training.md
+/home/arcaneorion/user-memory/arcane-training.md
 ```
 
 维护规则：
@@ -220,7 +220,7 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 
 ## Journal 周记录格式
 
-按 `~/.claude/user-memory/journal/schema.md` 写入 weekly journal。
+按 `/home/arcaneorion/user-memory/journal/schema.md` 写入 weekly journal。
 
 同一周内按时间顺序追加，不覆盖旧 entry。历史月度 journal 不回改，新记录从周级格式开始迭代。
 
@@ -237,12 +237,12 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 
 ## Git
 
-每次成功写入 journal、signal、working、tracks、arcane-training 或 raw 后，必须在 `~/.claude/user-memory` 仓库自动提交一次版本记录，不再额外询问。
+每次成功写入 journal、signal、working、tracks、arcane-training 或 raw 后，必须在 `/home/arcaneorion/user-memory` 仓库自动提交一次版本记录，不再额外询问。
 
 提交规则：
 
-1. 只在 `~/.claude/user-memory` 内执行 git 操作，使用 `git -C ~/.claude/user-memory ...`，不要影响当前项目仓库。
-2. 先运行 `git -C ~/.claude/user-memory status --short` 确认变更。
+1. 只在 `/home/arcaneorion/user-memory` 内执行 git 操作，使用 `git -C /home/arcaneorion/user-memory ...`，不要影响当前项目仓库。
+2. 先运行 `git -C /home/arcaneorion/user-memory status --short` 确认变更。
 3. 只 stage 本次 `assistant-remember` 实际写入或修改的文件，例如：
    - `journal/YYYY-Www.md`
    - `signals/YYYY-MM/YYYY-MM-DD-topic.md`（仅 full 模式）
