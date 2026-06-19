@@ -1,0 +1,35 @@
+# LocalWeb-inspired Alacritty theme
+# 配合 pi 的 ~/.pi/agent/themes/localweb.json 使用
+# 提取自 ~/AI/Agent-Systems-Engineer/localweb-skill/assets/shell/theme.css
+
+[colors.primary]
+background = '#2a435b'
+foreground = '#fff8d6'
+
+[colors.cursor]
+cursor = '#ffd43b'
+text = '#07111b'
+
+[colors.selection]
+background = '#3a5d78'
+text = '#fff8d6'
+
+[colors.normal]
+black   = '#07111b'
+red     = '#ff4d2e'
+green   = '#7cb342'
+yellow  = '#ffd43b'
+blue    = '#35d8ff'
+magenta = '#ffb454'
+cyan    = '#7fdbff'
+white   = '#c9deea'
+
+[colors.bright]
+black   = '#22384d'
+red     = '#ff7a5c'
+green   = '#a5d66f'
+yellow  = '#ffec80'
+blue    = '#7fdbff'
+magenta = '#ffd43b'
+cyan    = '#c9deea'
+white   = '#fff8d6'
