@@ -11,7 +11,7 @@ program = "/run/current-system/sw/bin/zsh"
 # 可选值: "full", "none", "transparent", "buttonless"
 decorations = "none"  # 完全去掉边框和标题栏（需 WM 支持）
 
-opacity = 0.6  # 透明度：1.0 = 完全不透明，0.0 = 完全透明
+opacity = 0.7  # 透明度：1.0 = 完全不透明，0.0 = 完全透明
 
 [window.padding]
 # 上下左右统一设置（单位：像素）
