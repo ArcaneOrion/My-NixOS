@@ -38,18 +38,13 @@
     };
   };
 
-  # 环境变量
-  environment.variables = {
-    LIBGL_DRIVERS_PATH = "${pkgs.mesa}/lib/dri";
-  };
-
   # 环境变量（Wayland 必需）
   environment.sessionVariables = {
     XDG_CURRENT_DESKTOP = "Niri";
     XDG_SESSION_TYPE = "wayland";
     GDK_BACKEND = "wayland";
     QT_QPA_PLATFORM = "wayland";
-    SDL_VIDEODRIVER = "wayland";
+    SDL_VIDEODRIVER = "wayland,x11";
     CLUTTER_BACKEND = "wayland";
 
     # 输入法环境变量
