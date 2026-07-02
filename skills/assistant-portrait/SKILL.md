@@ -17,18 +17,19 @@ description: 默认增量综合：以 synthesis-log 记录的综合基线为界�
 
 默认增量读取：信任当前 portrait，只重读综合基线之后的新材料。读取：
 
-1. `/home/arcaneorion/user-memory/signals/schema.md`
-2. `/home/arcaneorion/user-memory/signals/quality-criteria.md`
-3. `/home/arcaneorion/user-memory/journal/schema.md`
-4. `/home/arcaneorion/user-memory/archive/schema.md`
-5. `/home/arcaneorion/user-memory/portrait/` 全量（self、profile 三件、declarations、evidence-index、synthesis-log）
-6. `/home/arcaneorion/user-memory/working.md`
-7. `/home/arcaneorion/user-memory/learning/overview.md` 与相关学科文件
-8. `/home/arcaneorion/user-memory/important_raw/` 全量，作为 `important_raw_curated`，最高权重；体积小且为用户主动标记层，不参与增量裁剪
-9. 综合基线之后新增或修改的 `signals/` 文件，作为 `signal_structured`
-10. 综合基线之后新增或修改的 `raw/` 文件，作为 `raw_curated`
-11. 综合基线之后新增或修改的 `journal/YYYY-Www.md`，作为 `journal_weekly`；历史月度 `journal/YYYY-MM.md` 为 `journal_compressed`，只在全量综合时读取
-12. `archive/` 最近两个 `portrait_snapshot` 版本目录（vN 与 vN-1，含 manifest），用于版本连续性；更早快照与 `archive/v1/` legacy prior 默认不读
+1. `/home/arcaneorion/user-memory/diary/` 全量，作为 `diary_raw`，**第一权重（最高）**：主人每日手写、100% 独立于 AI 对话系统的原生数据。体积可能大，但因为是主人直接自我观察的唯一数据源，不参与增量裁剪，每次综合都全量读取。
+2. `/home/arcaneorion/user-memory/signals/schema.md`
+3. `/home/arcaneorion/user-memory/signals/quality-criteria.md`
+4. `/home/arcaneorion/user-memory/journal/schema.md`
+5. `/home/arcaneorion/user-memory/archive/schema.md`
+6. `/home/arcaneorion/user-memory/portrait/` 全量（self、profile 三件、declarations、evidence-index、synthesis-log）
+7. `/home/arcaneorion/user-memory/working.md`
+8. `/home/arcaneorion/user-memory/learning/overview.md` 与相关学科文件
+9. `/home/arcaneorion/user-memory/important_raw/` 全量，作为 `important_raw_curated`，**第二权重**；体积小且为用户主动标记层，不参与增量裁剪
+10. 综合基线之后新增或修改的 `signals/` 文件，作为 `signal_structured`
+11. 综合基线之后新增或修改的 `raw/` 文件，作为 `raw_curated`
+12. 综合基线之后新增或修改的 `journal/YYYY-Www.md`，作为 `journal_weekly`；历史月度 `journal/YYYY-MM.md` 为 `journal_compressed`，只在全量综合时读取
+13. `archive/` 最近两个 `portrait_snapshot` 版本目录（vN 与 vN-1，含 manifest），用于版本连续性；更早快照与 `archive/v1/` legacy prior 默认不读
 
 ### 综合基线机制
 
@@ -75,7 +76,8 @@ git -C /home/arcaneorion/user-memory diff --name-only <旧基线> <NEW_HEAD> -- 
 
 - 读取 synthesis-log 顶部旧基线，记录 `NEW_HEAD`，用 git diff 列出基线后新增或修改的 signals/raw/journal/learning/working.md 文件，全部读取。
 - 用户可以指定只综合某个主题或时间段，也可以调用 `assistant-portrait full` 全量重综合；默认不裁剪增量集。
-- `important_raw/` 是用户主动标记的最高权重原始材料层，标记为 `important_raw_curated`，每次全量读取；其权重高于 `signals/`、`raw/`、`journal_weekly`、`working_state` 和 `archive`。它通常保存用户认为具有核心画像价值、人生哲学、价值排序、长期身份叙事、重大校正或高强度原话证据的材料。
+- `diary/` 是主人每日手写的原生个人日记，标记为 `diary_raw`，**第一权重（最高）**。它完全脱离 AI 对话系统，是唯一由主人独立产生的数据源。diary 反映"主人对自己的观察"而非"主人与 AI 的交互"。diary 可以支持高置信度写入 `declarations.md`、`profile-core.md`、`profile-patterns.md` 或 `self.md`，且因为不存在 AI 推断层，diary 中的内容天然就是用户原话。但仍需区分"日记中的瞬时情绪"与"日记中反复出现的稳定模式"；单次日記片段不自动等于长期画像。
+- `important_raw/` 是用户主动标记的最高权重原始材料层，标记为 `important_raw_curated`，**第二权重**；其权重高于 `signals/`、`raw/`、`journal_weekly`、`working_state` 和 `archive`，但低于 `diary/`。它通常保存用户认为具有核心画像价值、人生哲学、价值排序、长期身份叙事、重大校正或高强度原话证据的材料。
 - `important_raw/` 可以支持高置信度写入 `declarations.md`、`profile-core.md`、`profile-patterns.md` 或 `self.md`，但仍必须区分用户原话、用户确认、其他 AI 推断和当前助理综合；不得把其他 AI 的解释直接写成用户立场。
 - `signals/`、`raw/` 和 `journal_weekly` 都是强证据：signals 有 full 模式下的逐轮用户原文、助理摘要和结构化标注，raw 高保真，weekly journal 有默认跨会话连续性。不能因为某次会话没有 signal 就忽略对应 journal-only 记录。
 - 当前 `portrait/` 全量读取：增量综合的本质是用新证据修订既有画像，不是重新生成。修订时遵守既有条目状态机——`user_confirmed` / `user_corrected` 条目不得被单次 AI 推断覆盖或降级。
@@ -88,6 +90,7 @@ git -C /home/arcaneorion/user-memory diff --name-only <旧基线> <NEW_HEAD> -- 
 
 在综合前检查：
 
+- diary 文件是否全部由主人手写（助理不得写入；如发现非主人手写内容应标记）
 - signals 是否符合 `schema.md`
 - journal 是否符合 `journal/schema.md`
 - archive 是否符合 `archive/schema.md`
@@ -261,6 +264,7 @@ self 是助理操作系统，更新条件更严格。
 
 ## 禁止事项
 
+- **严禁写入、编辑或删除 `diary/` 下的任何文件。** diary 是主人的私人写作空间，是记忆系统中唯一的"AI 零接触区"。
 - 不从单次会话直接写稳定画像；单次信号只能写为 `needs_review` 或明确低置信度。
 - 不把 AI 推断写成用户立场。
 - 不用高频主题覆盖低频核心命题。
