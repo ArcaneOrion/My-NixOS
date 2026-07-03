@@ -13,7 +13,7 @@ in
     description = "sing-box service";
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
-    wantedBy = [ "multi-user.target" ];
+    wantedBy = lib.mkForce [ ]; # 已禁用开机/升级自启（长期未用），需手动 systemctl start sing-box 启用
 
     serviceConfig = {
       Type = "simple";
