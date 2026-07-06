@@ -15,18 +15,19 @@ disable-model-invocation: true
 1. 优先读取 `/home/arcaneorion/user-memory/portrait/self.md`。
 2. 优先读取 `/home/arcaneorion/user-memory/portrait/profile-core.md`。
 3. 读取 `/home/arcaneorion/user-memory/portrait/declarations.md` 中系统科学元层视角、当前座右铭、核心声明和价值排序相关条目。
-4. 读取 `/home/arcaneorion/user-memory/working.md` 与 `/home/arcaneorion/user-memory/tracks.md`。
-5. 读取 `/home/arcaneorion/user-memory/learning/overview.md`（如存在）。
-6. 读取 `/home/arcaneorion/user-memory/learning/meta-learning-method.md`（如存在）。
-7. 读取 `/home/arcaneorion/user-memory/arcane-training.md`（如存在），用于识别 `arcane` 随机算法和推演游戏状态。
-8. 读取 `/home/arcaneorion/user-memory/journal/schema.md`（如存在）。
-9. 读取最近两周 weekly journal（如存在）：
+4. 读取 `/home/arcaneorion/user-memory/INDEX.md`——记忆系统全貌索引，了解有哪些基础数据快照可用。
+5. 读取 `/home/arcaneorion/user-memory/working.md` 与 `/home/arcaneorion/user-memory/tracks.md`。
+6. 读取 `/home/arcaneorion/user-memory/learning/overview.md`（如存在）。
+7. 读取 `/home/arcaneorion/user-memory/learning/meta-learning-method.md`（如存在）。
+8. 读取 `/home/arcaneorion/user-memory/arcane-training.md`（如存在），用于识别 `arcane` 随机算法和推演游戏状态。
+9. 读取 `/home/arcaneorion/user-memory/journal/schema.md`（如存在）。
+10. 读取最近两周 weekly journal（如存在）：
    - 当前 ISO 周：`/home/arcaneorion/user-memory/journal/YYYY-Www.md`
    - 上一个 ISO 周：`/home/arcaneorion/user-memory/journal/YYYY-Www.md`
-10. 如果 `portrait/` 仍是过渡骨架或信息不足，读取 `/home/arcaneorion/user-memory/archive/schema.md` 和 archive 最新 portrait 快照作为低权重 fallback。
-11. 检查当天日记：确认 `/home/arcaneorion/user-memory/diary/YYYY-MM-DD.md`（当天日期）是否存在。如果不存在，提醒主人写日记。
-12. 简短打招呼；根据当前状态自然地提及最相关的事项（待办、学习状态、近期连续议题）。系统科学元层视角和座右铭作为内部对齐材料，只有上下文相关或用户要求时自然引用。
-13. 行为准则以当前 `portrait/self.md` 为优先；portrait 不足时只把 archive 最新快照作为历史参考。
+11. 如果 `portrait/` 仍是过渡骨架或信息不足，读取 `/home/arcaneorion/user-memory/archive/schema.md` 和 archive 最新 portrait 快照作为低权重 fallback。
+12. 检查当天日记：确认 `/home/arcaneorion/user-memory/diary/YYYY-MM-DD.md`（当天日期）是否存在。如果不存在，提醒主人写日记。
+13. 简短打招呼；根据当前状态自然地提及最相关的事项（待办、学习状态、近期连续议题）。系统科学元层视角和座右铭作为内部对齐材料，只有上下文相关或用户要求时自然引用。
+14. 行为准则以当前 `portrait/self.md` 为优先；portrait 不足时只把 archive 最新快照作为历史参考。
 
 ## 启动提醒
 
