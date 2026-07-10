@@ -1,6 +1,6 @@
 ---
 name: assistant-tidy
-description: 静态审计用户记忆系统，检查 signals/portrait/working/learning 等文件是否符合结构、证据链和写入边界；只做最小修正。
+description: 静态审计用户记忆系统，检查 signals/portrait/working/learning 等文件是否符合结构、证据链、单一画像和写入边界；只做最小修正。
 ---
 
 # 记忆系统静态审计
@@ -16,15 +16,13 @@ description: 静态审计用户记忆系统，检查 signals/portrait/working/le
 - `/home/arcaneorion/user-memory/signals/schema.md`
 - `/home/arcaneorion/user-memory/signals/quality-criteria.md`
 - `/home/arcaneorion/user-memory/journal/schema.md`
-- `/home/arcaneorion/user-memory/archive/schema.md`
 - `/home/arcaneorion/user-memory/signals/` 文件列表与相关文件
 - `/home/arcaneorion/user-memory/portrait/` 全部文件
 - `/home/arcaneorion/user-memory/working.md` 与 `/home/arcaneorion/user-memory/tracks.md`
 - `/home/arcaneorion/user-memory/learning/overview.md`
 - `/home/arcaneorion/user-memory/journal/` 文件列表
-- `/home/arcaneorion/user-memory/archive/` 文件列表
 
-根目录旧画像 `profile*.md` / `self.md` 若仍存在，只标记为迁移残留；fallback 应优先读取 archive 最新 `portrait_snapshot`，`archive/v1/` 只作为低权重 `legacy_prior`。
+当前 `portrait/` 是唯一画像。根目录旧画像 `profile*.md` / `self.md`、`portrait/archive/`、`archive/vN/` 或其他画像副本若出现，标记为单一画像契约违规。历史画像只通过 Git 回溯。
 
 ## 允许操作
 
@@ -60,7 +58,6 @@ description: 静态审计用户记忆系统，检查 signals/portrait/working/le
 
 - `signals/`
 - `portrait/`
-- `archive/`
 - `journal/`
 - `learning/`
 - `raw/`
@@ -95,8 +92,11 @@ description: 静态审计用户记忆系统，检查 signals/portrait/working/le
 - 每条画像是否有 evidence-index 来源。
 - synthesis-log 顶部是否维护「当前综合基线」，基线 commit 是否存在于 git 历史。
 - declarations 是否保留用户原话、来源、状态、置信度和主体性边界。
-- `archive/v1/` 中 `legacy_prior` 是否标注 `needs_signal_support`。
-- `archive/v2/`、`archive/v3/` 等 `portrait_snapshot` 是否有版本目录、manifest 和完整 portrait 文件。
+- 新建或本次重写的条目是否区分 stable_fact、time_bound_fact、explicit_declaration、inferred_pattern、episodic_event 和 assistant_rule。
+- 是否错误地把“没有近期新证据”当作反证，或仅因超过 30 天而删除稳定事实、显式声明和仍有解释价值的 AI 推断。
+- 是否错误出现 `portrait/archive/`、`archive/vN/` 或其他画像副本。
+- 当前画像中的证据路径是否存在；`git_history` 引用的 commit 和历史路径是否可由 `git show` 解析。
+- synthesis-log 顶部是否维护 `last_consolidated`、`next_due` 和 `cadence_days`。
 - self 行为原则是否来自用户校正或多条 signals。
 
 ### 4. working/tracks 审计

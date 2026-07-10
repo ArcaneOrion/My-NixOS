@@ -12,7 +12,7 @@ description: 基于遗忘曲线和知识重联进行复习，维护 learning/ �
 ## 启动步骤
 
 1. 读取 `/home/arcaneorion/user-memory/portrait/self.md`。
-2. 读取 `/home/arcaneorion/user-memory/portrait/profile-patterns.md`（如当前 portrait 信息不足，则低权重读取 archive 最新 portrait 快照，不再读取根目录旧画像）。
+2. 读取 `/home/arcaneorion/user-memory/portrait/profile-patterns.md`（当前 portrait 是唯一画像，不读取历史副本）。
 3. 读取 `/home/arcaneorion/user-memory/learning/overview.md`。
 4. 读取相关学科文件。
 5. 识别需要复习的内容。

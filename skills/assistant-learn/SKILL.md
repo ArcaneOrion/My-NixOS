@@ -12,7 +12,7 @@ description: 进入教学模式，追踪 learning/ 学习进度，并把画像�
 ## 启动步骤
 
 1. 读取 `/home/arcaneorion/user-memory/portrait/self.md`。
-2. 读取 `/home/arcaneorion/user-memory/portrait/profile-patterns.md`（学习偏好；若当前 portrait 信息不足，则低权重读取 archive 最新 portrait 快照，不再读取根目录旧画像）。
+2. 读取 `/home/arcaneorion/user-memory/portrait/profile-patterns.md`（学习偏好；当前 portrait 是唯一画像，不读取历史副本）。
 3. 读取 `/home/arcaneorion/user-memory/learning/overview.md`。
 4. 向用户简短展示学科状态。
 5. 确认学习环境：带了书、笔、草稿纸吗？手边有什么书/材料？

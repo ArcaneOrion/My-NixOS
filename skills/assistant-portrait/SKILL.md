@@ -1,61 +1,99 @@
 ---
 name: assistant-portrait
-description: 默认增量综合：以 synthesis-log 记录的综合基线为界，用 important_raw 和基线后新增的 signals/raw/journal/learning/working 材料修订 portrait/ 用户画像与 assistant self；保留证据链、版本快照、置信度、边界和纠错记录；assistant-portrait full 触发全量重综合。
+description: 以当前 portrait 和 synthesis-log 基线增量吸收全部证据源，并按事实、显式声明、AI 推断和事件的不同语义执行画像巩固、纠错、合并、降级与遗忘；只维护单一当前画像，历史由 Git 保存；assistant-portrait full 触发全量重综合。
 ---
 
 # Assistant Portrait
 
 ## 定位
 
-从 `/home/arcaneorion/user-memory/` 的高质量历史材料中综合用户画像与助理行为规则，并默认直接写入 `portrait/`。核心目标是用大量真实数据和 AI 综合能力生成可演化的数字画像，而不是把画像更新变成繁琐审批流。
+`assistant-portrait` 是长期记忆巩固与遗忘系统。它从高质量历史材料中修订当前用户画像与助理行为规则，直接原地维护 `/home/arcaneorion/user-memory/portrait/`。
 
-默认增量综合：当前 portrait 被视为基线之前全部历史材料的综合结果，每次只用基线之后的新材料修订画像，不重放历史。
+系统只保留一套当前画像，不创建 `archive/vN` 或其他画像副本。每次成功更新后由 Git commit 保存历史、diff 和恢复入口。
 
-画像写入不是最终定稿；每条内容都必须保留来源类型、证据链、置信度、边界和状态，方便后续审计、纠错、降级或删除。每次写入新画像前，必须先把当前 `portrait/` 归档到 `archive/`，形成 v1/v2/v3... 的历史画像序列。
+默认使用增量综合：当前 portrait 代表旧综合基线之前的巩固结果，本次读取基线之后的新材料，并逐条审计现有画像是否应保留、强化、重写、合并、降级或遗忘。
 
 ## 读取范围
 
-默认增量读取：信任当前 portrait，只重读综合基线之后的新材料。读取：
+默认读取：
 
-1. `/home/arcaneorion/user-memory/diary/` 全量，作为 `diary_raw`，**第一权重（最高）**：主人每日手写、100% 独立于 AI 对话系统的原生数据。体积可能大，但因为是主人直接自我观察的唯一数据源，不参与增量裁剪，每次综合都全量读取。
-2. `/home/arcaneorion/user-memory/signals/schema.md`
-3. `/home/arcaneorion/user-memory/signals/quality-criteria.md`
-4. `/home/arcaneorion/user-memory/journal/schema.md`
-5. `/home/arcaneorion/user-memory/archive/schema.md`
-6. `/home/arcaneorion/user-memory/portrait/` 全量（self、profile 三件、declarations、evidence-index、synthesis-log）
-7. `/home/arcaneorion/user-memory/working.md`
-8. `/home/arcaneorion/user-memory/learning/overview.md` 与相关学科文件
-9. `/home/arcaneorion/user-memory/important_raw/` 全量，作为 `important_raw_curated`，**第二权重**；体积小且为用户主动标记层，不参与增量裁剪
-10. 综合基线之后新增或修改的 `signals/` 文件，作为 `signal_structured`
-11. 综合基线之后新增或修改的 `raw/` 文件，作为 `raw_curated`
-12. 综合基线之后新增或修改的 `journal/YYYY-Www.md`，作为 `journal_weekly`；历史月度 `journal/YYYY-MM.md` 为 `journal_compressed`，只在全量综合时读取
-13. `archive/` 最近两个 `portrait_snapshot` 版本目录（vN 与 vN-1，含 manifest），用于版本连续性；更早快照与 `archive/v1/` legacy prior 默认不读
+1. `/home/arcaneorion/user-memory/signals/schema.md`
+2. `/home/arcaneorion/user-memory/signals/quality-criteria.md`
+3. `/home/arcaneorion/user-memory/journal/schema.md`
+4. `/home/arcaneorion/user-memory/portrait/` 当前文件全量
+5. `/home/arcaneorion/user-memory/working.md` 与 `/home/arcaneorion/user-memory/tracks.md`
+6. `/home/arcaneorion/user-memory/learning/overview.md`
+7. 综合基线之后新增或修改的 `diary/`、`important_raw/`、`signals/`、`raw/`、`journal/`、`learning/`、`working.md`、`tracks.md`
 
-### 综合基线机制
+diary 是主人手写原生数据和 AI 零接触区，只读。默认模式下 diary 与 important_raw 也服从综合基线，不再每次全量重读；如果 `important_raw/INDEX.md` 的标记发生变化，同时读取本次被重新标记的对应材料。
 
-- 基线记录在 `portrait/synthesis-log.md` 顶部「当前综合基线」：一个 `/home/arcaneorion/user-memory` 仓库 commit hash 加日期。
-- 综合开始时先执行 `git -C /home/arcaneorion/user-memory rev-parse HEAD` 记下本次新基线 `NEW_HEAD`，再列出增量材料：
+### 综合基线
+
+基线记录在 `portrait/synthesis-log.md` 顶部。开始综合时：
+
+1. 读取旧基线 `OLD_BASELINE`。
+2. 执行 `git -C /home/arcaneorion/user-memory rev-parse HEAD`，记录 `NEW_HEAD`。
+3. 列出已提交增量：
 
 ```text
-git -C /home/arcaneorion/user-memory diff --name-only <旧基线> <NEW_HEAD> -- signals raw journal learning working.md
+git -C /home/arcaneorion/user-memory diff --name-only <OLD_BASELINE> <NEW_HEAD> -- diary important_raw signals raw journal learning working.md tracks.md
 ```
 
-- 列出的文件全部读取，不按"重要性"二次裁剪增量集。
-- 综合完成后把「当前综合基线」更新为 `NEW_HEAD`。综合期间其他 skill 新提交的材料会落入下一次增量窗口，不会丢失。
+4. 同时检查上述范围内的 staged、unstaged 和 untracked 文件；不能因材料尚未提交而漏读。对每个文件用只读内容哈希形成 `path + content_hash` 指纹。
+5. `synthesis-log.md` 的「已综合未提交输入」保存上次已吸收但尚未进入基线 commit 的指纹；同一指纹不重复综合。文件后来以相同内容进入 `NEW_HEAD` 时，该指纹已被 Git 基线覆盖，从表中移除。
+6. 综合完成后把基线更新为开始时记录的 `NEW_HEAD`，并更新未提交输入指纹。综合期间出现的新提交进入下一次窗口。
 
 ### 全量综合
 
-只在以下情况执行全量综合（读取 important_raw/signals/raw/journal 全部历史；archive 仍只读最近两个版本）：
+以下情况执行全量综合：
 
-- 用户明确调用 `assistant-portrait full` 或要求全量重综合。
-- `synthesis-log.md` 找不到「当前综合基线」。
-- 旧基线 commit 不存在于 git 历史。
+- 用户明确调用 `assistant-portrait full`。
+- synthesis-log 没有有效基线。
+- 旧基线 commit 不存在。
+- 用户要求重新审计全部历史证据。
 
-读取时不要追求“纯净数据源”，而要保留来源类型、证据权重和置信度。旧 journal 不需要回改为新 schema。archive 既保存旧系统先验，也保存每次 portrait 更新前的历史画像版本。
+全量模式读取 diary/important_raw/signals/raw/journal 全部历史和相关 learning 材料，但仍只写当前 portrait，diary 始终只读。
+
+## 证据判断
+
+不使用单一来源排名机械覆盖。每条证据分别判断：
+
+- **原生性**：是否由主人亲自书写或逐字保留。
+- **声明权威性**：是否为主人明确确认、纠正或撤回。
+- **时间稳定性**：单次状态、重复模式还是长期声明。
+- **事实性**：主观体验、可验证事件、外部事实或 AI 解释。
+- **时效与相关性**：是否仍适用于当前画像。
+
+默认规则：
+
+- 用户当前明确纠正的声明权威性最高，可以取代旧声明。
+- diary 的用户原生性最高，但单篇日记中的瞬时情绪不自动成为稳定画像。
+- signals 的逐轮原文适合恢复上下文；raw 保留完整语境；weekly journal 提供跨会话连续性。
+- important_raw 表示用户主动赋予高关注度，但其中其他 AI 的解释仍是 AI 解释。
+- learning 和 working/tracks 主要证明当前行为与状态，不自动证明长期核心。
+- 医学、神经科学和其他外部机制必须与用户体验分开；无外部依据时只能作为解释假设。
+
+### 画像的两条形成通道
+
+- **主人主动展现**：主人明确陈述、确认、纠正或撤回的价值观、自我定义、使命、边界和长期方向。用户原话就是这类声明成立的主要证据，不要求靠高频行为反复证明。
+- **助理合理推断**：助理根据历史事实、跨时间行为、选择、反例和上下文形成的画像判断。必须标为 AI 综合，保留证据、置信度和可反驳边界，不能覆盖主人当前明确声明。
+
+行为事实可以支持、限制或揭示声明与实践之间的张力，但不能单方面替主人改写价值观。
+
+### 内容类型与证据语义
+
+- `stable_fact`：相对稳定的事实。由用户原话、正式资料或可验证记录支持；没有重复出现不等于失效，只有纠正或反证才改写。
+- `time_bound_fact`：带时点的当前事实、状态或方向。记录 `as_of`；过期后标为 stale，并转入 working/history 或更新当前值，不把旧值继续当现状。
+- `explicit_declaration`：主人主动表达或确认的价值观、自我定义、使命和边界。保留原话；沉默和低频不构成反证，只能由主人后续纠正、撤回或明确替代。
+- `inferred_pattern`：助理从多条历史事实形成的行为或认知模式。需要独立样本、置信度和反例边界；可以被强化、降级或撤回。
+- `episodic_event`：一次性事件、任务和阶段经历。默认留在 journal；只有改变长期结构时进入 profile-history。
+- `assistant_rule`：主人对助理行为的明确要求或由多次错误形成的规则。按 self.md 的严格条件维护。
+
+缺少新证据只表示“近期没有更新”，不等于旧证据为假，也不自动构成遗忘理由。
 
 ## 输出文件
 
-允许直接写入：
+只允许直接写入：
 
 - `/home/arcaneorion/user-memory/portrait/self.md`
 - `/home/arcaneorion/user-memory/portrait/profile-core.md`
@@ -64,222 +102,134 @@ git -C /home/arcaneorion/user-memory diff --name-only <旧基线> <NEW_HEAD> -- 
 - `/home/arcaneorion/user-memory/portrait/declarations.md`
 - `/home/arcaneorion/user-memory/portrait/evidence-index.md`
 - `/home/arcaneorion/user-memory/portrait/synthesis-log.md`
-- `/home/arcaneorion/user-memory/archive/vN/`
 
-不要写入 `signals/`；signals 由 `assistant-remember full` 维护。不要写入 `learning/`；learning 由 `assistant-learn` 和 `assistant-review` 维护。
+不写 `diary/`、`signals/`、`raw/`、`journal/`、`learning/`、`working.md` 或 `tracks.md`。这些文件由各自维护者更新。
 
 ## 工作流程
 
-### 1. 确定综合范围
+### 1. 确定输入并审计质量
 
-按「读取范围」的增量规则确定本次输入：
+- 按基线机制列出全部增量材料。
+- 检查 signals/journal 是否符合各自 schema。
+- 区分用户原话、事实、用户声明、外部事实和 AI 推断。
+- 检查高频污染、当前声明冲突、来源缺失和未提交材料。
+- 质量不足时降低置信度并记录边界，不伪造缺失证据。
 
-- 读取 synthesis-log 顶部旧基线，记录 `NEW_HEAD`，用 git diff 列出基线后新增或修改的 signals/raw/journal/learning/working.md 文件，全部读取。
-- 用户可以指定只综合某个主题或时间段，也可以调用 `assistant-portrait full` 全量重综合；默认不裁剪增量集。
-- `diary/` 是主人每日手写的原生个人日记，标记为 `diary_raw`，**第一权重（最高）**。它完全脱离 AI 对话系统，是唯一由主人独立产生的数据源。diary 反映"主人对自己的观察"而非"主人与 AI 的交互"。diary 可以支持高置信度写入 `declarations.md`、`profile-core.md`、`profile-patterns.md` 或 `self.md`，且因为不存在 AI 推断层，diary 中的内容天然就是用户原话。但仍需区分"日记中的瞬时情绪"与"日记中反复出现的稳定模式"；单次日記片段不自动等于长期画像。
-- `important_raw/` 是用户主动标记的最高权重原始材料层，标记为 `important_raw_curated`，**第二权重**；其权重高于 `signals/`、`raw/`、`journal_weekly`、`working_state` 和 `archive`，但低于 `diary/`。它通常保存用户认为具有核心画像价值、人生哲学、价值排序、长期身份叙事、重大校正或高强度原话证据的材料。
-- `important_raw/` 可以支持高置信度写入 `declarations.md`、`profile-core.md`、`profile-patterns.md` 或 `self.md`，但仍必须区分用户原话、用户确认、其他 AI 推断和当前助理综合；不得把其他 AI 的解释直接写成用户立场。
-- `signals/`、`raw/` 和 `journal_weekly` 都是强证据：signals 有 full 模式下的逐轮用户原文、助理摘要和结构化标注，raw 高保真，weekly journal 有默认跨会话连续性。不能因为某次会话没有 signal 就忽略对应 journal-only 记录。
-- 当前 `portrait/` 全量读取：增量综合的本质是用新证据修订既有画像，不是重新生成。修订时遵守既有条目状态机——`user_confirmed` / `user_corrected` 条目不得被单次 AI 推断覆盖或降级。
-- `archive/` 最近两个 `portrait_snapshot` 版本用于理解最近的画像演化和回溯，不自动覆盖当前 portrait；`archive/v1/` legacy prior 与更早快照只在全量综合或用户要求版本对比时读取。
-- 多次综合差异审计默认关闭，用户明确要求时开启。
+### 2. 建立现有节点索引
 
-如果单次增量材料过大，先列出文件索引和主题，再按主题分批综合；`important_raw/` 必须优先读取，不得因已有 signals 或 journal 摘要而跳过。
+先扫描当前 portrait 的标题、已有稳定 ID 和主题关键词。没有 ID 的既有条目暂以“文件路径 + 标题”作为迁移键；新建条目，以及本次被重写或合并的条目，逐步补稳定 ID，不要求为迁移而一次性重写全部画像。每条新发现只能进入以下动作之一：
 
-### 2. 审计输入质量
+- **强化**：追加新证据或更新最近支持时间。
+- **重写**：新证据修正描述，原地替换旧表述。
+- **取代**：用户纠正或强反证推翻旧节点，记录取代关系后移除旧正文。
+- **合并**：重复节点收敛为一个主节点。
+- **降级**：从 core/self/declarations 降为 pattern、history 一句话或仅保留证据索引。
+- **遗忘**：从当前 portrait 移除；原始证据和 Git 历史仍保留。
+- **新建**：现有节点无法承接且证据足够时才创建。
 
-在综合前检查：
+### 3. 执行巩固与遗忘
 
-- diary 文件是否全部由主人手写（助理不得写入；如发现非主人手写内容应标记）
-- signals 是否符合 `schema.md`
-- journal 是否符合 `journal/schema.md`
-- archive 是否符合 `archive/schema.md`
-- important_raw 是否保留足够上下文，是否能区分用户原话、用户确认、用户校正、网页端 AI 推断和当前助理综合
-- 是否混淆事实、声明、AI 推断
-- 是否逐轮保留用户原文，是否用二次摘要替代了用户原话
-- 是否存在高频污染风险
-- 是否把 AI 推断写成用户立场
-- 是否与 `declarations.md` 既有条目冲突
+每次综合必须同时审计旧画像，不得只追加新内容：
 
-质量不足时，不要停止画像更新；应降低置信度、标明边界，并在 `evidence-index.md` 或 `synthesis-log.md` 记录缺口。
+- 单次事件、临时项目、具体岗位和短期任务不进入 profile-core。
+- `needs_review` 条目记录首次观察、最近支持和复审日期。30 天是默认复审触发点，不是自动失效期限。
+- 复审时按内容类型处理：显式声明和稳定事实不因时间降级；时效事实检查 `as_of`；AI 推断有新证据则强化，有反证则重写或撤回，只有在长期无支持且当前解释价值低时才压缩成一句话或仅保留证据索引。
+- 主人明确确认或纠正的价值声明持续有效，直到主人撤回、纠正或用新声明替代；行为不一致只能记录为张力或反例。
+- 被新声明取代的旧表述不长期留在当前正文；在 synthesis-log 记录后移除。
+- 相同内容在多个文件重复时保留一个主节点，其他位置改为简短引用或删除。
+- profile-history 只保留改变长期结构的转折；普通事件压缩为一句话和证据链接，或只留在 journal。
+- 与用户画像无关的外部知识、机制长文和阶段性方案退出 portrait。
+- 遗忘只作用于当前投影，不删除 diary/signals/raw/journal/learning 等原始证据。
 
-### 3. 归档当前 portrait
+### 4. 写入当前画像
 
-在写入新 `portrait/` 前，必须先按 `archive/schema.md` 归档当前 `portrait/`：
-
-1. 计算下一个版本号：取 `archive/` 下已有 `vN/` 目录的最大 N + 1。
-2. `archive/v1/` 保留旧系统迁移快照；第一次归档当前 `portrait/` 时创建 `archive/v2/`。
-3. 复制当前 portrait 关键文件到 `archive/vN/`：
-   - `self.md`
-   - `profile-core.md`
-   - `profile-patterns.md`
-   - `profile-history.md`
-   - `declarations.md`
-   - `evidence-index.md`
-   - `synthesis-log.md`
-4. 写入 `manifest.md`，记录版本号、归档时间、归档原因、来源文件和上一版本。
-5. 在本次 `synthesis-log.md` 记录归档目录。
-
-如果当前 `portrait/` 仍是空骨架，也要归档，并在 manifest 中标注 `notes: transitional skeleton`。不要因为它不完整而跳过版本记录。
-
-### 3.5. 现有节点映射
-
-综合新材料前，先扫描当前 portrait 所有 section 的标题和主题关键词，形成节点索引。对每条新发现，先判断归属：
-
-- **强化**：新证据支持现有节点，追加证据或提升置信度，不新建条目。
-- **更新**：新证据修正现有节点的描述，原地重写，旧表述标为 deprecated，不新建条目。
-- **取代**：新证据推翻现有节点，显式替换，保留 deprecated 记录。
-- **新建**：现有节点无法承接此内容，且有充分理由说明这是新的结构性发现，才新建条目。
-
-默认倾向强化和更新，而非新建。新建需要显式说明"现有节点无法承接此内容，因为……"。
-
-### 4. 直接生成并写入 portrait
-
-按目标文件分组生成画像条目，并直接写入对应文件。每条写入必须包含或可在 `evidence-index.md` 追溯到：
+新建或本次重写、合并的画像条目应有稳定 ID，并包含或可在 evidence-index 追溯到：
 
 ```markdown
 ## 条目标题
 
-- 状态：active_ai_generated / user_confirmed / user_corrected / needs_review / deprecated
-- 来源类型：important_raw_curated / signal_structured / raw_curated / journal_weekly / journal_compressed / learning_record / working_state / legacy_prior / portrait_snapshot
+- ID：pattern.action.external-structure
+- 状态：active_ai_generated / user_confirmed / user_corrected / needs_review
+- 内容类型：stable_fact / time_bound_fact / explicit_declaration / inferred_pattern / episodic_event / assistant_rule
+- 来源类型：current_conversation / diary_raw / important_raw_curated / signal_structured / raw_curated / journal_weekly / journal_compressed / learning_record / working_state / git_history
 - 置信度：低 / 中 / 中高 / 高
-- 证据：
-  - important_raw/YYYY-MM-DD-topic.md#section
-  - signals/YYYY-MM/YYYY-MM-DD-topic.md#section
-  - raw/YYYY-MM-DD-topic.md#section
-  - archive/vN/file.md#section
+- 事实时点（as_of）：YYYY-MM-DD / 不适用
+- 首次观察：YYYY-MM-DD
+- 最近支持：YYYY-MM-DD
+- 复审日期：YYYY-MM-DD / 不适用
+- 证据：...
 - 边界/反证：...
-- 最近审计：YYYY-MM-DD
-
-画像内容...
 ```
 
-写入原则：
+`current_conversation` 仅表示证据来自当前会话；必须同时保留日期和用户原话或纠正内容。
 
-- 高置信度条目可写入为 `active_ai_generated`。
-- 用户明确确认过的条目标为 `user_confirmed`。
-- 用户纠正过的条目标为 `user_corrected`，并记录旧表述如何被替换。
-- 证据不足但值得观察的条目可写入 `needs_review`，不得伪装成稳定事实。
-- 旧条目被推翻时标为 `deprecated`，不要静默删除证据链。
+状态规则：
+
+- `user_confirmed`：用户明确确认。
+- `user_corrected`：用户明确纠正，优先于旧表述。
+- `active_ai_generated`：多源证据支持的 AI 综合，仍可纠错。
+- `needs_review`：等待复审的 AI 推断或时效事实；到期触发重新判断，不自动删除。
+- `deprecated` 只作为本次迁移日志中的过渡状态，不长期保留在当前画像正文。
 
 ### 5. 区分画像层级
 
-按以下规则处理：
+- `profile-core.md`：当前稳定事实、身份、长期方向和核心世界观。
+- `profile-patterns.md`：跨会话复现的认知、学习和行为模式。
+- `profile-history.md`：真正改变长期结构的历史转折索引。
+- `declarations.md`：用户明确声明及当前有效版本，保留原话和主体性边界。
+- `self.md`：助理操作系统；只接受用户明确校正、职责变化或多次重复问题。
+- `evidence-index.md`：优先由条目稳定 ID 派生紧凑索引；尚未迁移 ID 的既有条目暂用“文件路径 + 标题”定位，不重复保存大段画像正文。
+- `synthesis-log.md`：当前基线、维护日期、最近综合摘要和历史一行索引。
 
-- `profile-core.md`：稳定事实、身份、长期方向；必须有强证据或明确标注为低权重 legacy prior。
-- `profile-patterns.md`：认知模式、学习偏好、行为模式；需要多条证据或明确写为 `needs_review`。
-- `profile-history.md`：历史决策和长期观察；保留时间、来源和解释层级。
-- `declarations.md`：理想、使命、核心命题、座右铭、价值排序、关系边界、长期身份叙事；可以直接写入，但必须保留用户原话、来源、状态和主体性边界。
-- `self.md`：助理行为原则和角色定位；写入条件比 profile 更严格，必须来自用户明确校正、系统职责变化，或多条 signals 支持的反复行为问题。
+### 6. 更新维护日期
 
-### 6. 写入后汇报与纠错入口
+`synthesis-log.md` 顶部维护：
 
-写入完成后，向用户简短汇报：
+```text
+- last_consolidated: YYYY-MM-DD
+- next_due: YYYY-MM-DD
+- cadence_days: 14
+```
 
-- 本次综合基线窗口（旧基线 → 新基线）与增量文件清单。
-- 归档了哪个 archive 版本目录。
-- 写入了哪些 portrait 文件。
-- 哪些条目是高置信度，哪些是 `needs_review`。
-- 哪些条目来自 important_raw/raw/signals/weekly journal/历史 journal/archive。
-- 是否发现冲突、反证或高频污染风险。
-- 用户可以直接要求修改、降级、删除、恢复或确认某条画像。
+成功完成巩固和遗忘审计后，将 `next_due` 设为 14 天后。即使没有新增画像条目，也要记录本次审计结果。
 
-不要在写入前把所有内容变成审批清单；只有当存在会覆盖核心声明、删除大量既有画像、或用户明确要求先看草稿时，才先展示草稿。
+### 7. 汇报
 
-### 7. 更新索引和日志
+汇报：
 
-每次写入后：
-
-1. 更新对应 `portrait/*.md` 文件。
-2. 更新 `portrait/evidence-index.md`，记录证据链、状态、反证和 archive 版本来源。
-3. 更新 `portrait/synthesis-log.md`，记录本次输入范围、归档目录、权重、写入结果、降级/删除、后续疑问。
-4. 把 `synthesis-log.md` 顶部「当前综合基线」更新为本次综合开始时记录的 `NEW_HEAD` 和日期。
+- 基线窗口和增量文件。
+- 强化、重写、取代、合并、降级、遗忘和新建的节点。
+- 高置信度与 needs_review 条目。
+- 冲突、反证、证据缺口和高频污染风险。
+- 当前画像仍可由用户直接修改、撤回或纠正。
 
 ### 8. Git 版本记录
 
-每次成功写入 portrait 和 archive 后，必须在 `/home/arcaneorion/user-memory` 仓库自动提交一次版本记录，不再额外询问。
+每次成功写入后，在 `/home/arcaneorion/user-memory` 自动提交一次：
 
-提交规则：
+1. 先检查 `git status --short`。
+2. 只 stage 本次实际修改的 `portrait/*.md`，不使用 `git add .` 或 `git add -A`。
+3. 没有变化时跳过提交并汇报。
+4. commit message：`巩固用户画像：<主题>`。
+5. 不 push，不跳过 hooks。
 
-1. 只在 `/home/arcaneorion/user-memory` 内执行 git 操作，使用 `git -C /home/arcaneorion/user-memory ...`，不要影响当前项目仓库。
-2. 先运行 `git -C /home/arcaneorion/user-memory status --short` 确认变更。
-3. 只 stage 本次 `assistant-portrait` 实际写入或修改的文件，例如：
-   - `portrait/self.md`
-   - `portrait/profile-core.md`
-   - `portrait/profile-patterns.md`
-   - `portrait/profile-history.md`
-   - `portrait/declarations.md`
-   - `portrait/evidence-index.md`
-   - `portrait/synthesis-log.md`
-   - `archive/vN/manifest.md`
-   - `archive/vN/self.md`
-   - `archive/vN/profile-core.md`
-   - `archive/vN/profile-patterns.md`
-   - `archive/vN/profile-history.md`
-   - `archive/vN/declarations.md`
-   - `archive/vN/evidence-index.md`
-   - `archive/vN/synthesis-log.md`
-4. 不使用 `git add .` 或 `git add -A`。
-5. 如果没有变更，跳过提交并汇报“无变更可提交”。
-6. commit message 使用中文，格式建议：
-
-```text
-更新用户画像：<综合主题>
-```
-
-7. 使用 heredoc 传递提交信息。
-8. 不 push。
-9. 不跳过 hooks；如果 commit 失败，说明原因并保留未提交状态。
-
-## archive 规则
-
-`archive/` 是历史画像版本库，不只是旧系统兼容目录。
-
-来源类型分两类：
-
-```text
-source_type: legacy_prior
-status: needs_signal_support
-```
-
-用于旧系统迁移快照，权重低，不自动继承。
-
-```text
-source_type: portrait_snapshot
-status: archived_snapshot
-```
-
-用于每次 portrait 更新前冻结的历史画像版本，保留画像演化轨迹。portrait_snapshot 可用于回溯、版本比较和解释变化，但不自动覆盖当前 portrait。
-
-不要把 legacy prior 或 portrait snapshot 自动复制成当前画像；如需迁移条目，必须在 `evidence-index.md` 标注来源版本、证据状态和迁移原因。
+Git 是画像历史的唯一版本系统。需要回溯时使用 `git log`、`git show` 和 `git diff`，不创建画像副本目录。
 
 ## self.md 更新规则
 
-self 是助理操作系统，更新条件更严格。
-
-允许直接写入 self 的情况：
+self 是助理操作系统，更新条件比 profile 更严格。允许写入的情况：
 
 1. 用户明确校正助理行为。
-2. 多条 signals 显示助理同类错误反复出现。
+2. 多条 signals 显示同类错误反复出现。
 3. 用户要求改变助理系统职责。
-4. 既有 self 规则与当前 portrait 架构冲突，需要迁移或降级。
-
-行为原则写入后必须可追溯、可纠错，不得用单次弱推断改写助理长期操作系统。
-
-## 多次综合差异审计
-
-默认关闭。用户明确要求时，对同一批数据生成多份综合结果并比较差异：
-
-- 多次输出一致：提高置信度。
-- 多次输出差异大：标记为证据不足或解释不稳定。
+4. 既有 self 规则与当前记忆架构冲突。
 
 ## 禁止事项
 
-- **严禁写入、编辑或删除 `diary/` 下的任何文件。** diary 是主人的私人写作空间，是记忆系统中唯一的"AI 零接触区"。
-- 不从单次会话直接写稳定画像；单次信号只能写为 `needs_review` 或明确低置信度。
+- 严禁写入、编辑、删除或重命名 `diary/` 下任何文件。
+- 不从单次会话直接写稳定画像。
 - 不把 AI 推断写成用户立场。
 - 不用高频主题覆盖低频核心命题。
-- 不替用户最终定义理想、使命、价值排序或身份结论；声明层写入必须保留用户原话和可纠错状态。
-- 不因追求流程安全而阻塞画像生成；质量控制依靠证据链、置信度、状态、版本快照和后续审计。
-- 不在生成新 portrait 前跳过 archive 版本归档。
-- 不在增量模式下重读基线之前的 signals/raw/journal 或 archive 全量；追溯历史用 `assistant-portrait full` 或用户明确要求的版本对比。
+- 不替用户最终定义理想、使命、价值排序或长期身份。
+- 不创建 `archive/vN`、`portrait/archive/` 或其他画像副本。
+- 不因保留历史而让失效内容长期占据当前 portrait；历史由 Git 和原始证据层保存。
