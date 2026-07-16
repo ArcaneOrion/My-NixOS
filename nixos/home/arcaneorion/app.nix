@@ -25,7 +25,10 @@
      burpsuite #web渗透测试
      ghidra-bin #逆向工程
      netcat #网络瑞士军刀
-     nmap #网络扫描器 
+     nmap #网络扫描器
+
+     #视频录制
+     obs-studio
 
      # 娱乐
      bilibili
