@@ -39,11 +39,13 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 默认模式必须写入：
 
 - `/home/arcaneorion/user-memory/journal/YYYY-Www.md`
+- `/home/arcaneorion/user-memory/corpus/YYYY-MM.md`（主人消息原文语料库，见「corpus 语料库规则」）
 
 `full` 模式必须写入：
 
 - `/home/arcaneorion/user-memory/signals/YYYY-MM/YYYY-MM-DD-topic.md`
 - `/home/arcaneorion/user-memory/journal/YYYY-Www.md`
+- `/home/arcaneorion/user-memory/corpus/YYYY-MM.md`
 
 按需写入：
 
@@ -203,16 +205,26 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 6. `working.md` 只保留 `Arcane Training Game` 的本周运行状态，`tracks.md` 只保留长期轨道入口；细节放在本文件。
 7. 不直接写 portrait；连续多次形成稳定偏好、能力变化或助理行为规则变化时，只写 portrait 更新提示。
 
-### 8. raw 例外存档
+### 9. 追加 corpus 语料库
+
+每次 remember（默认与 full 模式都执行）：把本次会话主人的每条实质消息原文追加到 `/home/arcaneorion/user-memory/corpus/YYYY-MM.md`（当月文件，不存在则创建）。规则详情见 `corpus/README.md`，要点：
+
+- **全量不筛**：主人每条实质消息都收，含短指令；筛选职责归 signals，corpus 不做价值筛选。
+- **外部粘贴占位符**：主人消息中的外部正文（清单/转发/引文/AI 对话）替换为 `[外部粘贴：内容摘要+字数；完整原文存 signal 路径]`；主人自己打的引导句正常收录。
+- **逐字照录**：错字/笔误照录不纠，保留原文换行；无 signal 对应的轮次标「（remember 后同会话续）」。
+- 若本次会话已写 signal（full 模式），corpus 条目可从 signal 逐轮原文提取后核校，漏收的轮次（signal 写入后的续轮）单独补。
+
+### 10. raw 例外存档
 
 只有当对话属于重大决策、核心命题、深度认知框架，且用户明确同意时，才写入 `raw/`。
 
-### 9. 汇报结果
+### 11. 汇报结果
 
 汇报写入了哪些文件：
 
 - record mode。
 - journal 周记录。
+- corpus 语料库追加（当月文件与条数）。
 - signal 文件（仅 full 模式）。
 - working/tracks/arcane-training/raw（如有）。
 
@@ -245,6 +257,7 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 2. 先运行 `git -C /home/arcaneorion/user-memory status --short` 确认变更。
 3. 只 stage 本次 `assistant-remember` 实际写入或修改的文件，例如：
    - `journal/YYYY-Www.md`
+   - `corpus/YYYY-MM.md`
    - `signals/YYYY-MM/YYYY-MM-DD-topic.md`（仅 full 模式）
    - `working.md`
    - `tracks.md`（如本次写入）
