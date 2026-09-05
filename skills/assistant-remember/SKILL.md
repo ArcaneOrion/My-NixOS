@@ -40,12 +40,14 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 
 - `/home/arcaneorion/user-memory/journal/YYYY-Www.md`
 - `/home/arcaneorion/user-memory/corpus/YYYY-MM.md`（主人消息原文语料库，见「corpus 语料库规则」）
+- `/home/arcaneorion/user-memory/facts/YYYY-MM.md`（行为事实账本，见 facts/README.md）
 
 `full` 模式必须写入：
 
 - `/home/arcaneorion/user-memory/signals/YYYY-MM/YYYY-MM-DD-topic.md`
 - `/home/arcaneorion/user-memory/journal/YYYY-Www.md`
 - `/home/arcaneorion/user-memory/corpus/YYYY-MM.md`
+- `/home/arcaneorion/user-memory/facts/YYYY-MM.md`
 
 按需写入：
 
@@ -205,7 +207,7 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 6. `working.md` 只保留 `Arcane Training Game` 的本周运行状态，`tracks.md` 只保留长期轨道入口；细节放在本文件。
 7. 不直接写 portrait；连续多次形成稳定偏好、能力变化或助理行为规则变化时，只写 portrait 更新提示。
 
-### 9. 追加 corpus 语料库
+### 8. 追加 corpus 语料库
 
 每次 remember（默认与 full 模式都执行）：把本次会话主人的每条实质消息原文追加到 `/home/arcaneorion/user-memory/corpus/YYYY-MM.md`（当月文件，不存在则创建）。规则详情见 `corpus/README.md`，要点：
 
@@ -213,6 +215,16 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 - **外部粘贴占位符**：主人消息中的外部正文（清单/转发/引文/AI 对话）替换为 `[外部粘贴：内容摘要+字数；完整原文存 signal 路径]`；主人自己打的引导句正常收录。
 - **逐字照录**：错字/笔误照录不纠，保留原文换行；无 signal 对应的轮次标「（remember 后同会话续）」。
 - 若本次会话已写 signal（full 模式），corpus 条目可从 signal 逐轮原文提取后核校，漏收的轮次（signal 写入后的续轮）单独补。
+
+### 9. 追加 facts 行为事实账本
+
+每次 remember（默认与 full 模式都执行）：把本次会话的行为事实写入 `/home/arcaneorion/user-memory/facts/YYYY-MM.md`（当月文件，日分节，不存在则创建）。规则详情见 `facts/README.md`，要点：
+
+- **记发生，不记意义**：产出/事件/决定/身体协议执行入账；动机、机制、情绪、评价、未落为决定的计划不入账。每条 ≤1 行，原子。
+- **四标记恰好一个**：〔痕〕磁盘可核（git/文件/部署/已验证送达）→ 先跑 `~/.local/bin/python3.12 facts/backfill-git.py today` 取当日痕迹候选；〔报〕主人会话报备；〔决〕主人明确决定/声明；〔档〕历史回溯补录（仅补录时用）。
+- **身体/协议子块**（09-05 起）：当日小节末尾按主人报备填睡眠/健身/正念/硬停/清晨协议，只记发生与数值，零评判。
+- **缺日不补**：无事实的日期保持缺失；当日小节已存在则追加不改写。
+- 账本内零评价；知行配对只发生在冷分析/画像层。
 
 ### 10. raw 例外存档
 
@@ -225,6 +237,7 @@ full 模式仍必须追加 weekly journal。journal entry 必须标明：
 - record mode。
 - journal 周记录。
 - corpus 语料库追加（当月文件与条数）。
+- facts 行为账本追加（当月文件与〔痕/报/决〕条数）。
 - signal 文件（仅 full 模式）。
 - working/tracks/arcane-training/raw（如有）。
 
