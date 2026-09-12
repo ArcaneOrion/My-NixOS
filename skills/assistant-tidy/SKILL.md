@@ -13,6 +13,7 @@ description: 静态审计用户记忆系统，检查 signals/portrait/working/le
 
 读取：
 
+- `/home/arcaneorion/user-memory/schema/memory-contract.md`（归属契约：审计依据）
 - `/home/arcaneorion/user-memory/signals/schema.md`
 - `/home/arcaneorion/user-memory/signals/quality-criteria.md`
 - `/home/arcaneorion/user-memory/journal/schema.md`

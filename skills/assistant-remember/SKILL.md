@@ -20,12 +20,33 @@ description: 默认将当前会话整理为周级 journal 跨会话摘要；用�
 
 默认模式开始前读取：
 
-1. `/home/arcaneorion/user-memory/journal/schema.md`
-2. 当前 ISO 周的 `/home/arcaneorion/user-memory/journal/YYYY-Www.md`（不存在则创建）
-3. `/home/arcaneorion/user-memory/working.md` 与 `/home/arcaneorion/user-memory/tracks.md`
-4. `/home/arcaneorion/user-memory/arcane-training.md`（如本次涉及 `arcane` 随机算法、训练事件或推演游戏）
-5. `/home/arcaneorion/user-memory/portrait/declarations.md`（按需，避免误把既有声明重复写入）
-6. `/home/arcaneorion/user-memory/portrait/evidence-index.md`（按需，避免重复画像更新提示）
+1. `/home/arcaneorion/user-memory/schema/memory-contract.md`（归属契约：写入必须打标，见「归属标记」节）
+2. `/home/arcaneorion/user-memory/journal/schema.md`
+3. 当前 ISO 周的 `/home/arcaneorion/user-memory/journal/YYYY-Www.md`（不存在则创建）
+4. `/home/arcaneorion/user-memory/working.md` 与 `/home/arcaneorion/user-memory/tracks.md`
+5. `/home/arcaneorion/user-memory/arcane-training.md`（如本次涉及 `arcane` 随机算法、训练事件或推演游戏）
+6. `/home/arcaneorion/user-memory/portrait/declarations.md`（按需，避免误把既有声明重复写入）
+7. `/home/arcaneorion/user-memory/portrait/evidence-index.md`（按需，避免重复画像更新提示）
+
+## 归属标记（写入强制，2026-09-12 主人授权）
+
+写入 `journal/`、`working.md`、`tracks.md`、`learning/` 的任何事实性表述，末尾必须带归属标记：
+
+| 标记 | 含义 |
+|---|---|
+| 〔主〕 | 主人亲口原话 |
+| 〔认〕 | 主人明确确认或认可的说法（可能是 AI 先提出） |
+| 〔决〕 | 主人做出的决定、选择、授权、撤回 |
+| 〔痕〕 | 可核验的行为痕迹（文件、提交、时间戳、平台记录） |
+| 〔档〕 | 归档记录本身 |
+| 〔AI〕 | **AI 的判断、概括、诊断、推断——不是主人的立场** |
+
+硬规则：
+
+1. 没有把握归入前五类，一律打 〔AI〕，不许裸写。这是本次事故的根因。
+2. 不要把 AI 当时对主人的解读（如"某行为有逃避成分"）写成主人的立场或事实，必须标 〔AI〕。
+3. journal 的「用户修正/选择/撤回」节：主人原话标 〔主〕，主人的决定标 〔决〕，助理的判断标 〔AI〕。
+4. 完整规则与判定边界见 `schema/memory-contract.md`。
 
 `full` 模式额外读取：
 

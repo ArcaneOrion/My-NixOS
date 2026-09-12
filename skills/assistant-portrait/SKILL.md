@@ -17,13 +17,16 @@ description: 以当前 portrait 和 synthesis-log 基线增量吸收全部证据
 
 默认读取：
 
-1. `/home/arcaneorion/user-memory/signals/schema.md`
-2. `/home/arcaneorion/user-memory/signals/quality-criteria.md`
-3. `/home/arcaneorion/user-memory/journal/schema.md`
-4. `/home/arcaneorion/user-memory/portrait/` 当前文件全量
-5. `/home/arcaneorion/user-memory/working.md` 与 `/home/arcaneorion/user-memory/tracks.md`
-6. `/home/arcaneorion/user-memory/learning/overview.md`
-7. 综合基线之后新增或修改的 `diary/`、`important_raw/`、`signals/`、`raw/`、`journal/`、`learning/`、`working.md`、`tracks.md`
+1. `/home/arcaneorion/user-memory/schema/memory-contract.md`（归属契约：读旧的 〔AI〕 条目时不得当主人立场用）
+2. `/home/arcaneorion/user-memory/signals/schema.md`
+3. `/home/arcaneorion/user-memory/signals/quality-criteria.md`
+4. `/home/arcaneorion/user-memory/journal/schema.md`
+5. `/home/arcaneorion/user-memory/portrait/` 当前文件全量
+6. `/home/arcaneorion/user-memory/working.md` 与 `/home/arcaneorion/user-memory/tracks.md`
+7. `/home/arcaneorion/user-memory/learning/overview.md`
+8. 综合基线之后新增或修改的 `diary/`、`important_raw/`、`signals/`、`raw/`、`journal/`、`learning/`、`working.md`、`tracks.md`
+
+综合时必须执行归属契约：读到的 〔AI〕 条目是过去某个模型的判断，可以被本次综合推翻、重写或撤回；不得因为它在文件里躺着就当成主人已确认的事实。主人 2026-09-12 授权："你可以说不认同，并重新分析。"〔主〕
 
 diary 是主人手写原生数据和 AI 零接触区，只读。默认模式下 diary 与 important_raw 也服从综合基线，不再每次全量重读；如果 `important_raw/INDEX.md` 的标记发生变化，同时读取本次被重新标记的对应材料。
 
