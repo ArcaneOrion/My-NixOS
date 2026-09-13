@@ -11,12 +11,12 @@ description: 基于遗忘曲线和知识重联进行复习，维护 learning/ �
 
 ## 启动步骤
 
-1. 读取 `/home/arcaneorion/user-memory/portrait/self.md`。
-2. 读取 `/home/arcaneorion/user-memory/portrait/profile-patterns.md`（当前 portrait 是唯一画像，不读取历史副本）。
-3. 读取 `/home/arcaneorion/user-memory/learning/overview.md`。
+1. 读取 `/home/arcaneorion/user-memory/learning/tutoring-system.md`（系统规则源；本模式是该系统的保持环节）。
+2. 读取 `/home/arcaneorion/user-memory/learning/student-model.md`（能力点、状态、下次复习）。
+3. 读取 `/home/arcaneorion/user-memory/portrait/self.md`（行为规则）。
 4. 读取相关学科文件。
-5. 识别需要复习的内容。
-6. 展示今日复习建议，询问要复习哪个，或是否全部过一遍。
+5. 识别到期需要复习的能力点。
+6. 展示今日复习建议（按到期顺序，3-5 项），询问要复习哪个，或是否全部过一遍。
 
 ## 写入范围
 
@@ -64,6 +64,16 @@ description: 基于遗忘曲线和知识重联进行复习，维护 learning/ �
 ```
 
 效果评分 1-5：1 表示完全想不起，5 表示轻松回忆且产生新连接。
+
+## 与掌握判定的关系（2026-09-13 起）
+
+复习结果要回写学生模型，不能只记在学科文件里：
+
+- **三条同时过**（隔时 ≥1 天 + 换场景 + 无辅助）→ `learning/student-model.md` 中该能力点状态 **+1**。
+- 任一条不过 → 状态不动，只追加一次证据，不写评价。
+- 复习后更新该能力点的"下次复习"字段，间隔按上面的简化 SM-2 表计算。
+- 有辅助（翻书、问助理、用 AI）时做出的结果不作为升级证据——见 `tutoring-system.md` §4。
+- 间隔效应的依据：最优间隔随目标保留期增长；要保留得更久，间隔就该更长，而不是复习得更勤。
 
 ## 轻量复习
 
