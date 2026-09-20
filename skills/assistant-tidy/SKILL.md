@@ -1,7 +1,6 @@
 ---
 name: assistant-tidy
 description: 必要时主动动态审计用户记忆系统，检查 signals/portrait/working/learning 等文件是否符合结构、证据链、单一画像和写入边界；只做最小修正。
-disable-model-invocation: true
 ---
 
 # 记忆系统静态审计

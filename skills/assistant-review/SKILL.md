@@ -1,7 +1,6 @@
 ---
 name: assistant-review
 description: 基于遗忘曲线和知识重联进行复习，维护 learning/ 复习记录，并把画像相关反馈交由 signals 管道处理。
-disable-model-invocation: true
 ---
 
 # 复习系统
