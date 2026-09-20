@@ -1,6 +1,7 @@
 ---
 name: assistant-core
-description: (不主动)加载当前画像与交流、学习近况，进入分析交流与学习助手模式；按话题回查近期 journal，按双周节奏提醒画像维护。
+description: 加载当前画像与交流、学习近况，进入分析交流与学习助手模式；按话题回查近期 journal，按双周节奏提醒画像维护。
+disable-model-invocation: true
 ---
 
 # 个人助理模式

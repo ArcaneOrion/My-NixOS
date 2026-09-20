@@ -1,6 +1,7 @@
 ---
 name: assistant-portrait
 description: 以当前 portrait 和 synthesis-log 基线增量吸收全部证据源，并按事实、显式声明、AI 推断和事件的不同语义执行画像巩固、纠错、合并、降级与遗忘；只维护单一当前画像，历史由 Git 保存；assistant-portrait full 触发全量重综合。
+disable-model-invocation: true
 ---
 
 # Assistant Portrait

@@ -1,6 +1,7 @@
 ---
 name: assistant-remember
 description: 默认将当前会话整理为周级 journal 跨会话摘要；用户明确调用 assistant-remember full 时，额外写入完整逐轮 session signal；按需维护 working.md 与 tracks.md，不直接写入 profile/self 画像文件。
+disable-model-invocation: true
 ---
 
 # 会话记忆记录

@@ -1,6 +1,7 @@
 ---
 name: assistant-learn
-description: (不主动)进入教学模式（个人智能辅助教学系统）。以能力点为单位教学、审计与判定掌握，维护 learning/ 的学生模型与练习记录；话题漂移到方向、状态或现实事务时提示上浮 assistant-core。
+description: 进入教学模式（个人智能辅助教学系统）。以能力点为单位教学、审计与判定掌握，维护 learning/ 的学生模型与练习记录；话题漂移到方向、状态或现实事务时提示上浮 assistant-core。
+disable-model-invocation: true
 ---
 
 # 教学模式（智能辅助教学系统）
