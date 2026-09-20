@@ -1,6 +1,6 @@
 ---
 name: assistant-tidy
-description: 静态审计用户记忆系统，检查 signals/portrait/working/learning 等文件是否符合结构、证据链、单一画像和写入边界；只做最小修正。
+description: 必要时动态审计用户记忆系统，检查 signals/portrait/working/learning 等文件是否符合结构、证据链、单一画像和写入边界；只做最小修正。
 ---
 
 # 记忆系统静态审计
@@ -8,6 +8,8 @@ description: 静态审计用户记忆系统，检查 signals/portrait/working/le
 ## 定位
 
 审计已落盘的记忆文件是否符合新系统边界。执行格式修正、重复提示、证据链检查和疑问标记；不要生成画像，不要替代 `assistant-portrait`。
+
+职责范围按当前 `portrait/self.md` 核对。2026-09-14 起本系统回归交流、分析、学习与相应记忆；重点检查工作执行流水、项目运维、账号状态、工作待办是否重回常驻文件，以及是否错误建立与 work 副系统的关系。历史原文与当前职责分开处理。
 
 ## 读取范围
 
