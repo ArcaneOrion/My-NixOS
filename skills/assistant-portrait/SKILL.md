@@ -13,8 +13,8 @@ description: 维护主人画像：从上次综合基线以来的证据增量巩�
 2. `portrait/` 全部文件，`working.md`、`tracks.md`、`learning/overview.md`。
 3. 增量。`portrait/synthesis-log.md` 顶部记着基线 commit（下称 OLD）：
    - `git -C /home/arcaneorion/user-memory rev-parse HEAD` 记为 NEW；
-   - `git -C /home/arcaneorion/user-memory diff --name-only OLD NEW -- diary important_raw signals raw journal corpus facts learning working.md tracks.md`；
-   - 再用 `git status --short` 找这些范围里未提交、未跟踪的文件，一并读。上次读过的未提交文件记在 synthesis-log 的「已综合未提交输入」（路径 + sha256），内容没变就跳过。
+   - `git -C /home/arcaneorion/user-memory diff --name-only OLD NEW -- diary important_raw signals raw journal corpus learning working.md tracks.md`；
+   - 再用 `git status --short` 找这些范围里未提交、未跟踪的文件，一并读。Git 差异中的删除项查变更记录与历史版本，不按当前路径读取或重建。上次读过的未提交文件记在 synthesis-log 的「已综合未提交输入」（路径 + sha256），内容没变就跳过。
 4. diary 只读。important_raw 里其他 AI 说的话仍算那个 AI 的。
 
 主人调用 `assistant-portrait full`，或基线缺失、基线 commit 不存在时，读全部历史输入。
@@ -31,7 +31,7 @@ description: 维护主人画像：从上次综合基线以来的证据增量巩�
 | assistant_rule | 主人明确要求，或同类错误多次出现 | 按下面 self.md 的条件 |
 
 - 当前会话里主人的明确纠正优先于旧记录。
-- 同一件事被 diary、signal、journal、corpus、facts 或几个模型重复记录，只算一个样本。
+- 同一件事被 diary、signal、journal、corpus 或几个模型重复记录，只算一个样本。
 - 没有新证据只说明近期没更新，不是遗忘的理由。
 - 医学、神经科学等外部机制与主人的体验分开写；没有外部依据的只能当假设。
 

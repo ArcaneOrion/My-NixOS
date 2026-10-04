@@ -1,6 +1,6 @@
 ---
 name: assistant-remember
-description: 把当前会话归档到记忆仓库：写周级 journal、corpus 原话与 facts，按需更新 working.md 和 tracks.md；assistant-remember full 另写逐轮 signal。不写画像。
+description: 把当前会话归档到记忆仓库：写周级 journal 与 corpus 原话，按需更新 working.md 和 tracks.md；assistant-remember full 另写逐轮 signal。不写画像。
 ---
 
 # 会话归档
@@ -17,12 +17,11 @@ description: 把当前会话归档到记忆仓库：写周级 journal、corpus �
 
 ## 每次都写
 
-1. **journal**：在当前周文件末尾追加一条 entry，字段按 `journal/schema.md`，本周概览随之更新。默认 `record_mode：journal_only`、`signal：无（journal-only）`。需要进画像的内容写在 entry 的后续状态里，交给 assistant-portrait。
+1. **journal**：在当前周文件末尾追加一条 entry，字段按 `journal/schema.md`，本周概览随之更新。默认 `record_mode：journal_only`、`signal：无（journal-only）`。需要进画像的内容写在 entry 的后续状态里，交给 assistant-portrait。事件的事实与日期、来源、执行者随 entry 保存；亲手学习证据引用 learning，不再另写事实账本。
 2. **corpus**：主人每条消息逐字进 `corpus/YYYY-MM.md`。
    - Claude Code 会话：先预览 `~/.local/bin/uv run --no-project python tools/corpus_export.py --topic "<主题>"`，没问题再加 `--write`。脚本只追加上次导出之后的消息，按上海时间分月，接续 T 编号。
    - 脚本提示的长消息，检查里面有没有外部粘贴（清单、转发、其他 AI 的输出）；有就把粘贴部分换成 `[外部粘贴：内容摘要 + 字数]`，主人自己写的引导句保留。
    - 其他平台的会话按 `corpus/README.md` 手工转录。
-3. **facts**：本次会话里发生的事写进 `facts/YYYY-MM.md` 当日小节，规则见 `facts/README.md`：记发生、不记意义，每行一条，恰好一个标记（〔痕〕〔报〕〔决〕〔档〕）。没有就不写。
 
 ## 按需写
 
@@ -55,4 +54,4 @@ description: 把当前会话归档到记忆仓库：写周级 journal、corpus �
 
 ## 汇报
 
-列出写入的文件：journal entry、corpus 条数、facts 条数、signal（full）、working、tracks 等；说明留给画像的内容还没进画像。
+列出写入的文件：journal entry、corpus 条数、signal（full）、working、tracks 等；说明留给画像的内容还没进画像。
