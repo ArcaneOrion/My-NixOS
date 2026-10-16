@@ -26,6 +26,9 @@
     };
   };
 
+  # 内核参数（注意：必须在 boot.loader 块外，属于顶层 boot.*）
+  boot.kernelParams = [ "pci=noaer" "usbcore.autosuspend=-1" ];
+
   nix.settings.substituters = [
     "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
     "https://cache.nixos.org"  

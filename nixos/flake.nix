@@ -15,11 +15,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     
-    # DankMaterialShell(niri) 
-    dankMaterialShell = {
-      url = "github:AvengeMedia/DankMaterialShell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    }; 
+    # DankMaterialShell(niri) —— 当前未使用（对应 home 模块已注释），
+    # 且该仓库经代理拉取不稳定，暂时从 inputs 移除。
+    # 需要时取消下面这段和 home/arcaneorion 里对应 import 的注释即可。
+    # dankMaterialShell = {
+    #   url = "github:AvengeMedia/DankMaterialShell";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
   };
 
